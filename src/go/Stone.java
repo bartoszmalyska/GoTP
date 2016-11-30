@@ -16,8 +16,13 @@ public class Stone {
     public Stone(int row, int col, GameBoard.State state) {
         chain = null;
         this.state = state;
-        liberties = 4;
         this.row = row;
         this.col = col;
+        if((col==GameBoard.SIZE-1 || col==0) && (row==0 || row == GameBoard.SIZE-1))
+            liberties=2;
+        else if(col==GameBoard.SIZE-1 || row == GameBoard.SIZE-1 || col==0 || row == 0)
+            liberties=3;
+        else
+            liberties=4;
     }
 }
