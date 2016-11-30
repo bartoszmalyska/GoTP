@@ -76,6 +76,27 @@ public class Grid {
         // Every go.Stone is part of a go.Chain so we check total liberties
         if (stone.chain.getLiberties() == 0) {
             for (Stone s : stone.chain.stones) {
+                Stone[] neighbors = new Stone[4];
+                // Don't check outside the board
+                if (s.row > 0) {
+                    neighbors[0] = stones[s.row - 1][s.col];
+                }
+                if (s.row < SIZE - 1) {
+                    neighbors[1] = stones[s.row + 1][s.col];
+                }
+                if (s.col > 1) {
+                    neighbors[2] = stones[s.row][s.col - 1];
+                }
+                if (s.col < SIZE - 1) {
+                    neighbors[3] = stones[s.row][s.col + 1];
+                }
+                for (Stone neighbor : neighbors) {
+                    // Do nothing if no adjacent go.Stone
+                    if (neighbor == null) {
+                        continue;
+                    }
+                    neighbor.liberties++;
+                }
                 s.chain = null;
                 stones[s.row][s.col] = null;
             }
