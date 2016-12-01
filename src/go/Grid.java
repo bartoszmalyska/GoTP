@@ -48,7 +48,7 @@ public class Grid {
         }
         else
             counter++;
-        if (col > 1) {
+        if (col > 0) {
             neighbors[2] = stones[row][col - 1];
         }
         else
@@ -68,6 +68,7 @@ public class Grid {
 
             newStone.liberties--;
             neighbor.liberties--;
+            System.out.println("Kamień na pozycji " + neighbor.row + "," + neighbor.col + " ma " + neighbor.liberties + " oddechów.");
 
             // If it's different color than newStone check him
             if (neighbor.state != newStone.state) {
@@ -104,7 +105,7 @@ public class Grid {
                 if (s.row < SIZE - 1) {
                     neighbors[1] = stones[s.row + 1][s.col];
                 }
-                if (s.col > 1) {
+                if (s.col > 0) {
                     neighbors[2] = stones[s.row][s.col - 1];
                 }
                 if (s.col < SIZE - 1) {
@@ -116,6 +117,7 @@ public class Grid {
                         continue;
                     }
                     neighbor.liberties++;
+                    System.out.println("Kamień na pozycji " + neighbor.row + "," + neighbor.col + " ma " + neighbor.liberties + " oddechów.");
                 }
                 s.chain = null;
                 stones[s.row][s.col] = null;
