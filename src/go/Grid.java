@@ -5,6 +5,10 @@ package go;
  *
  *
  */
+/*
+ *TODO : Do naprawienia błąd podczas łączenia w chain, wyrzuca NullPointerException. Problem z liczeniem oddechów jeśli kamień jest otoczony kamieniami tego samego koloru
+ *
+ */
 public class Grid {
 
     private final int SIZE;
@@ -64,7 +68,7 @@ public class Grid {
                 finalChain.join(neighbor.chain);
             }
         }
-        finalChain.addStone(newStone);
+                finalChain.addStone(newStone);
     }
 
     /**
@@ -74,6 +78,7 @@ public class Grid {
      */
     public void checkStone(Stone stone) {
         // Every go.Stone is part of a go.Chain so we check total liberties
+
         if (stone.chain.getLiberties() == 0) {
             for (Stone s : stone.chain.stones) {
                 Stone[] neighbors = new Stone[4];
