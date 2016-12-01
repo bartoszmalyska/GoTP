@@ -16,6 +16,8 @@ public class Grid {
      * [row][column]
      */
     private Stone[][] stones;
+    public int counter;
+
 
     public Grid(int size) {
         SIZE = size;
@@ -32,21 +34,30 @@ public class Grid {
     public void addStone(int row, int col, GameBoard.State state) {
         Stone newStone = new Stone(row, col, state);
         stones[row][col] = newStone;
+        counter = 0;
         // Check neighbors
         Stone[] neighbors = new Stone[4];
         // Don't check outside the board
         if (row > 0) {
             neighbors[0] = stones[row - 1][col];
         }
+        else
+            counter++;
         if (row < SIZE - 1) {
             neighbors[1] = stones[row + 1][col];
         }
+        else
+            counter++;
         if (col > 1) {
             neighbors[2] = stones[row][col - 1];
         }
+        else
+            counter++;
         if (col < SIZE - 1) {
             neighbors[3] = stones[row][col + 1];
         }
+        else
+            counter++;
         // Prepare go.Chain for this new go.Stone
         Chain finalChain = new Chain(newStone.state);
         for (Stone neighbor : neighbors) {
@@ -61,14 +72,18 @@ public class Grid {
             // If it's different color than newStone check him
             if (neighbor.state != newStone.state) {
                 checkStone(neighbor);
+                counter++;
                 continue;
             }
-
             if (neighbor.chain != null) {
                 finalChain.join(neighbor.chain);
             }
         }
                 finalChain.addStone(newStone);
+                if(counter==4)
+                {
+                    checkStone(newStone);
+                }
     }
 
     /**

@@ -12,7 +12,6 @@ import java.awt.event.MouseEvent;
 public class GameBoard extends JPanel {
 
     //private static final long serialVersionUID = -494530433694385328L;//
-
     /**
      * Number of rows/columns.
      */
@@ -36,6 +35,7 @@ public class GameBoard extends JPanel {
     private State current_player;
     private Grid grid;
     private Point lastMove;
+    private boolean isSuicide=false; // sprawdza, czy ruch był samobójczy
 
     public GameBoard() {
         this.setBackground(Color.ORANGE);
@@ -69,12 +69,11 @@ public class GameBoard extends JPanel {
                 grid.addStone(row, col, current_player);
                 lastMove = new Point(col, row);
 
-                // Switch current player
-                if (current_player == State.BLACK) {
-                    current_player = State.WHITE;
-                } else {
-                    current_player = State.BLACK;
-                }
+                // Switch current player if move was correct
+                if(grid.counter!=4)
+                    switchPlayer();
+                else
+                    isSuicide=true;
                 repaint();
             }
         });
@@ -116,7 +115,7 @@ public class GameBoard extends JPanel {
             }
         }
         // Highlight last move
-        if (lastMove != null) {
+        if (lastMove != null && isSuicide==false) {
             g2.setColor(Color.RED);
             g2.drawOval(lastMove.x * TILE_SIZE + BORDER_SIZE - TILE_SIZE / 2,
                     lastMove.y * TILE_SIZE + BORDER_SIZE - TILE_SIZE / 2,
@@ -128,6 +127,15 @@ public class GameBoard extends JPanel {
     public Dimension getPreferredSize() {
         return new Dimension(N_OF_TILES * TILE_SIZE + BORDER_SIZE * 2,
                 N_OF_TILES * TILE_SIZE + BORDER_SIZE * 2);
+    }
+    public void switchPlayer()
+    {
+        isSuicide=false;
+        if (current_player == State.BLACK) {
+            current_player = State.WHITE;
+        } else {
+            current_player = State.BLACK;
+        }
     }
 
 }
