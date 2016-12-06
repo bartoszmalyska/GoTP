@@ -87,11 +87,13 @@ public class GameBoard extends JPanel {
         this.addKeyListener(new KeyAdapter() {
 
             @Override
-            public void keyPressed(KeyEvent VK_F1) {
-                //System.out.print("pass");
+            public void keyPressed(KeyEvent e) {
+                int key = e.getKeyCode();
+                if (key == KeyEvent.VK_F1){
+                System.out.print("pass");
                 PassCounter ++;
                 //if (PassCounter == 2) hook na zmiane trybu na dogadywanie terytorium
-                switchPlayer();
+                switchPlayer();}
 
             }
         });
