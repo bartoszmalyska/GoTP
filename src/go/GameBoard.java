@@ -2,11 +2,13 @@ package go;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 /**
  * Provides I/O.
- *
+ * TODO Ko powoduje ze gracz ma dwie tury z rzędu
  *
  */
 public class GameBoard extends JPanel {
@@ -36,10 +38,12 @@ public class GameBoard extends JPanel {
     private Grid grid;
     private Point lastMove;
     private boolean isSuicide=false; // sprawdza, czy ruch był samobójczy
+    private int PassCounter=0;
 
     public GameBoard() {
         this.setBackground(Color.ORANGE);
         grid = new Grid(SIZE);
+
         // Black always starts
         current_player = State.BLACK;
 
@@ -70,11 +74,27 @@ public class GameBoard extends JPanel {
                 lastMove = new Point(col, row);
 
                 // Switch current player if move was correct
-                if(grid.counter!=4)
+                if(grid.counter!=4) {
+                    PassCounter=0;
                     switchPlayer();
+                }
                 else
                     isSuicide=true;
                 repaint();
+            }
+        });
+        //to powinno zmieniać gracza po naciśnięciu F1 ale java się niezgadza -.-//
+        this.addKeyListener(new KeyAdapter() {
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int key = e.getKeyCode();
+                if (key == KeyEvent.VK_F1){
+                System.out.print("pass");
+                PassCounter ++;
+                //if (PassCounter == 2) hook na zmiane trybu na dogadywanie terytorium
+                switchPlayer();}
+
             }
         });
     }
