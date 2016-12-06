@@ -37,10 +37,12 @@ public class GameBoard extends JPanel {
     private State current_player;
     private Grid grid;
     private Point lastMove;
-    private boolean isSuicide=false; // sprawdza, czy ruch był samobójczy
+    private boolean isSuicide=false;
     private int PassCounter=0;
 
     public GameBoard() {
+        this.setFocusable(true);
+        this.requestFocusInWindow();
         this.setBackground(Color.ORANGE);
         grid = new Grid(SIZE);
 
@@ -90,10 +92,9 @@ public class GameBoard extends JPanel {
             public void keyPressed(KeyEvent e) {
                 int key = e.getKeyCode();
                 if (key == KeyEvent.VK_F1){
-                System.out.print("pass");
-                PassCounter ++;
-                //if (PassCounter == 2) hook na zmiane trybu na dogadywanie terytorium
-                switchPlayer();}
+                    PassCounter ++;
+                    //if (PassCounter == 2) hook na zmiane trybu na dogadywanie terytorium
+                    switchPlayer();}
 
             }
         });
