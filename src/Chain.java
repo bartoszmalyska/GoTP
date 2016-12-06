@@ -6,12 +6,12 @@ import java.util.ArrayList;
  * A collection of adjacent go.Stone(s).
  *
  */
-public class Chain {
+/*public class Chain {
 
-    public ArrayList<Stone> stones;
+     public CopyOnWriteArrayList<Stone> stones;
 
     public Chain() {
-        stones = new ArrayList<>();
+        stones = new CopyOnWriteArrayList<>();
     }
 
     public int getLiberties() {
@@ -32,5 +32,3 @@ public class Chain {
             addStone(stone);
         }
     }
-
-}

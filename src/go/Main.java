@@ -33,4 +33,5 @@ public class Main {
         f.setResizable(false);
         f.setLocationByPlatform(true);
         f.setVisible(true);
-    }}
+    }
+}

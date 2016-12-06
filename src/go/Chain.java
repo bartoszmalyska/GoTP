@@ -1,6 +1,6 @@
 package go;
 
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * A collection of adjacent go.Stone(s).
@@ -8,11 +8,10 @@ import java.util.ArrayList;
  */
 public class Chain {
 
-    public ArrayList<Stone> stones;
-    public GameBoard.State state;
+    public CopyOnWriteArrayList<Stone> stones;
 
-    public Chain(GameBoard.State state) {
-        stones = new ArrayList<>();
+    public Chain() {
+        stones = new CopyOnWriteArrayList<>();
     }
 
     public int getLiberties() {
@@ -29,9 +28,10 @@ public class Chain {
     }
 
     public void join(Chain chain) {
-        for (Stone stone : chain.stones) {
+        for (Stone stone :  chain.stones) {
             addStone(stone);
         }
     }
+
 
 }

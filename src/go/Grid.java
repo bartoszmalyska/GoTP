@@ -6,7 +6,7 @@ package go;
  *
  */
 /*
- *TODO : Do naprawienia błąd podczas łączenia w chain, wyrzuca NullPointerException. Problem z liczeniem oddechów jeśli kamień jest otoczony kamieniami tego samego koloru
+ *
  *
  */
 public class Grid {
