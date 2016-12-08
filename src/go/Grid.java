@@ -17,7 +17,10 @@ public class Grid {
      */
     private Stone[][] stones;
     public int counter;
-
+    public boolean isKo = false;
+    public boolean createdKo = false;
+    public Stone[] ko = new Stone[2];
+    private int c = 0;
 
     public Grid(int size) {
         SIZE = size;
@@ -29,63 +32,76 @@ public class Grid {
      *
      * @param row
      * @param col
-     *
      */
     public void addStone(int row, int col, GameBoard.State state) {
         Stone newStone = new Stone(row, col, state);
         stones[row][col] = newStone;
         counter = 0;
-        // Check neighbors
-        Stone[] neighbors = new Stone[4];
-        // Don't check outside the board
-        if (row > 0) {
-            neighbors[0] = stones[row - 1][col];
-        }
-        else
-            counter++;
-        if (row < SIZE - 1) {
-            neighbors[1] = stones[row + 1][col];
-        }
-        else
-            counter++;
-        if (col > 0) {
-            neighbors[2] = stones[row][col - 1];
-        }
-        else
-            counter++;
-        if (col < SIZE - 1) {
-            neighbors[3] = stones[row][col + 1];
-        }
-        else
-            counter++;
-        // Prepare go.Chain for this new go.Stone
-        Chain finalChain = new Chain(newStone.state);
-        for (Stone neighbor : neighbors) {
-            // Do nothing if no adjacent go.Stone
-            if (neighbor == null) {
-                continue;
-            }
+        createdKo = false;
+        for (int i = 0; i < c; i++) {
+            if (newStone.row == ko[i].row && newStone.col == ko[i].col) {
+                System.out.println("KO!");
+                isKo = true;
+                counter = 4;
+                newStone.chain = null;
+                stones[row][col] = null;
 
-            newStone.liberties--;
-            neighbor.liberties--;
-            System.out.println("Kamień na pozycji " + neighbor.row + "," + neighbor.col + " ma " + neighbor.liberties + " oddechów.");
 
-            // If it's different color than newStone check him
-            if (neighbor.state != newStone.state) {
-                checkStone(neighbor);
+                break;
+            } else
+                isKo = false;
+
+        }
+        if (!isKo) {
+            c = 0;
+            // Check neighbors
+            Stone[] neighbors = new Stone[4];
+            // Don't check outside the board
+            if (row > 0) {
+                neighbors[0] = stones[row - 1][col];
+            } else
                 counter++;
-                continue;
+            if (row < SIZE - 1) {
+                neighbors[1] = stones[row + 1][col];
+            } else
+                counter++;
+            if (col > 0) {
+                neighbors[2] = stones[row][col - 1];
+            } else
+                counter++;
+            if (col < SIZE - 1) {
+                neighbors[3] = stones[row][col + 1];
+            } else
+                counter++;
+            // Prepare go.Chain for this new go.Stone
+            Chain finalChain = new Chain();
+            for (Stone neighbor : neighbors) {
+                // Do nothing if no adjacent go.Stone
+                if (neighbor == null) {
+                    continue;
+                }
+
+                newStone.liberties--;
+                neighbor.liberties--;
+                // If it's different color than newStone check him
+                if (neighbor.state != newStone.state) {
+                    checkStone(neighbor);
+                    counter++;
+                    continue;
+                }
+                if (neighbor.chain != null) {
+                    finalChain.join(neighbor.chain);
+                }
             }
-            if (neighbor.chain != null) {
-                finalChain.join(neighbor.chain);
+            finalChain.addStone(newStone);
+            if (counter == 4) {
+                checkStone(newStone);
+                if(newStone.liberties>0)
+                    counter--;
             }
         }
-                finalChain.addStone(newStone);
-                if(counter==4)
-                {
-                    checkStone(newStone);
-                }
     }
+
 
     /**
      * Check liberties of go.Stone
@@ -94,7 +110,6 @@ public class Grid {
      */
     public void checkStone(Stone stone) {
         // Every go.Stone is part of a go.Chain so we check total liberties
-
         if (stone.chain.getLiberties() == 0) {
             for (Stone s : stone.chain.stones) {
                 Stone[] neighbors = new Stone[4];
@@ -116,9 +131,18 @@ public class Grid {
                     if (neighbor == null) {
                         continue;
                     }
+                    if(neighbor.liberties==0  && neighbor.state!=s.state)
+                    {
+                            System.out.println("JESTEM!");
+                            createdKo=true;
+                            s.liberties++;
+                            ko[0]=s;
+                            ko[1]=neighbor;
+                            c=2;
+                    }
                     neighbor.liberties++;
-                    System.out.println("Kamień na pozycji " + neighbor.row + "," + neighbor.col + " ma " + neighbor.liberties + " oddechów.");
                 }
+
                 s.chain = null;
                 stones[s.row][s.col] = null;
             }

@@ -76,7 +76,7 @@ public class GameBoard extends JPanel {
                 lastMove = new Point(col, row);
 
                 // Switch current player if move was correct
-                if(grid.counter!=4) {
+                if(grid.counter!=4 || grid.createdKo) {
                     PassCounter=0;
                     switchPlayer();
                 }
@@ -95,7 +95,6 @@ public class GameBoard extends JPanel {
                     PassCounter ++;
                     //if (PassCounter == 2) hook na zmiane trybu na dogadywanie terytorium
                     switchPlayer();}
-
             }
         });
     }
