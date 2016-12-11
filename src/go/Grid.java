@@ -40,7 +40,6 @@ public class Grid {
         createdKo = false;
         for (int i = 0; i < c; i++) {
             if (newStone.row == ko[i].row && newStone.col == ko[i].col) {
-                System.out.println("KO!");
                 isKo = true;
                 counter = 4;
                 newStone.chain = null;
@@ -93,12 +92,34 @@ public class Grid {
                     finalChain.join(neighbor.chain);
                 }
             }
-            finalChain.addStone(newStone);
-            if (counter == 4) {
-                checkStone(newStone);
-                if(newStone.liberties>0)
-                    counter--;
+            if(checkChain(finalChain,newStone))
+            {
+                finalChain.addStone(newStone);
+                if (counter == 4) {
+                    checkStone(newStone);
+                    if(newStone.liberties>0)
+                        counter--;
+                }
             }
+            else {
+                counter = 4;
+                newStone.chain = null;
+                stones[newStone.row][newStone.col] = null;
+                for (Stone neighbor : neighbors) {
+                    // Do nothing if no adjacent go.Stone
+                    if (neighbor == null) {
+                        continue;
+                    }
+
+                    neighbor.liberties++;
+                    // If it's different color than newStone check him
+                    if (neighbor.state != newStone.state) {
+                        checkStone(neighbor);
+                        continue;
+                    }
+                }
+            }
+
         }
     }
 
@@ -133,12 +154,11 @@ public class Grid {
                     }
                     if(neighbor.liberties==0  && neighbor.state!=s.state)
                     {
-                            System.out.println("JESTEM!");
-                            createdKo=true;
-                            s.liberties++;
-                            ko[0]=s;
-                            ko[1]=neighbor;
-                            c=2;
+                        createdKo=true;
+                        s.liberties++;
+                        ko[0]=s;
+                        ko[1]=neighbor;
+                        c=2;
                     }
                     neighbor.liberties++;
                 }
@@ -176,5 +196,11 @@ public class Grid {
             // System.out.println("getState != null");
             return stone.state;
         }
+    }
+    public boolean checkChain(Chain chain, Stone stone)
+    {
+        if(stone.liberties==0 && chain.stones.size()+1>1 && chain.getLiberties()==0)
+            return false;
+        return true;
     }
 }
