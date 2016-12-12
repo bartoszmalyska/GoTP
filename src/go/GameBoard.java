@@ -39,6 +39,7 @@ public class GameBoard extends JPanel {
     private Point lastMove;
     private boolean isSuicide=false;
     private int PassCounter=0;
+    boolean territorymode = false;
 
     public GameBoard() {
         this.setFocusable(true);
@@ -48,56 +49,63 @@ public class GameBoard extends JPanel {
 
         // Black always starts
         current_player = State.BLACK;
+            this.addMouseListener(new MouseAdapter() {
 
-        this.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    // Converts to float for float division and then rounds to
+                    // provide nearest intersection.
+                    int row = Math.round((float) (e.getY() - BORDER_SIZE)
+                            / TILE_SIZE);
+                    int col = Math.round((float) (e.getX() - BORDER_SIZE)
+                            / TILE_SIZE);
 
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                // Converts to float for float division and then rounds to
-                // provide nearest intersection.
-                int row = Math.round((float) (e.getY() - BORDER_SIZE)
-                        / TILE_SIZE);
-                int col = Math.round((float) (e.getX() - BORDER_SIZE)
-                        / TILE_SIZE);
+                    // DEBUG INFO
+                    // System.out.println(String.format("y: %d, x: %d", row, col));
 
-                // DEBUG INFO
-                // System.out.println(String.format("y: %d, x: %d", row, col));
+                    // Check wherever it's valid
+                    if (territorymode == false){
+                    if (row >= SIZE || col >= SIZE || row < 0 || col < 0) {
+                        return;
+                    }
 
-                // Check wherever it's valid
-                if (row >= SIZE || col >= SIZE || row < 0 || col < 0) {
-                    return;
+                    if (grid.isOccupied(row, col)) {
+                        return;
+                    }
+
+                    grid.addStone(row, col, current_player);
+                    lastMove = new Point(col, row);
+
+                    // Switch current player if move was correct
+                    if (grid.counter != 4 || grid.createdKo) {
+                        PassCounter = 0;
+                        switchPlayer();
+                    } else
+                        isSuicide = true;
+                    repaint();
                 }
+                    else if (territorymode == true){
 
-                if (grid.isOccupied(row, col)) {
-                    return;
+                    }
                 }
+            });
+            this.addKeyListener(new KeyAdapter() {
 
-                grid.addStone(row, col, current_player);
-                lastMove = new Point(col, row);
-
-                // Switch current player if move was correct
-                if(grid.counter!=4 || grid.createdKo) {
-                    PassCounter=0;
-                    switchPlayer();
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    int key = e.getKeyCode();
+                    if (key == KeyEvent.VK_F1) {
+                        PassCounter++;
+                        if (PassCounter == 2) {
+                            boolean territorymode = true;
+                            System.out.println("entering territory mode");
+                        } else
+                            switchPlayer();
+                    }
                 }
-                else
-                    isSuicide=true;
-                repaint();
-            }
-        });
-        //to powinno zmieniać gracza po naciśnięciu F1 ale java się niezgadza -.-//
-        this.addKeyListener(new KeyAdapter() {
+            });
+        }
 
-            @Override
-            public void keyPressed(KeyEvent e) {
-                int key = e.getKeyCode();
-                if (key == KeyEvent.VK_F1){
-                    PassCounter ++;
-                    //if (PassCounter == 2) hook na zmiane trybu na dogadywanie terytorium
-                    switchPlayer();}
-            }
-        });
-    }
 
     @Override
     protected void paintComponent(Graphics g) {

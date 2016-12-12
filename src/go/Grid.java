@@ -180,6 +180,7 @@ public class Grid {
         return stones[row][col] != null;
     }
 
+
     /**
      * Returns State (black/white) of given position or null if it's unoccupied.
      * Needs valid row and column.
