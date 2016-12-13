@@ -184,7 +184,7 @@ public class Grid {
     public boolean isOccupied(int row, int col) {
         return stones[row][col] != null;
     }
-
+    public boolean isMarked(int row, int col) {return Territory.Marks[row][col] != null;}
 
     /**
      * Returns State (black/white) of given position or null if it's unoccupied.
@@ -208,5 +208,9 @@ public class Grid {
         if(stone.liberties==0 && chain.stones.size()+1>1 && chain.getLiberties()==0)
             return false;
         return true;
+    }
+    public void addMark(int row, int col, GameBoard.State state){
+        TerritoryMark newTerritoryMark = new TerritoryMark(row,col,state);
+        Territory.Marks [row][col] = newTerritoryMark;
     }
 }

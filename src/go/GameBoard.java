@@ -64,7 +64,6 @@ public class GameBoard extends JPanel {
                     // System.out.println(String.format("y: %d, x: %d", row, col));
 
                     // Check wherever it's valid
-                    if (territorymode == false){
                     if (row >= SIZE || col >= SIZE || row < 0 || col < 0) {
                         return;
                     }
@@ -72,19 +71,22 @@ public class GameBoard extends JPanel {
                     if (grid.isOccupied(row, col)) {
                         return;
                     }
+                    if (territorymode == false) {
 
-                    grid.addStone(row, col, current_player);
-                    lastMove = new Point(col, row);
+                        grid.addStone(row, col, current_player);
+                        lastMove = new Point(col, row);
 
-                    // Switch current player if move was correct
-                    if (grid.counter != 4 || grid.createdKo) {
-                        PassCounter = 0;
-                        switchPlayer();
-                    } else
-                        isSuicide = true;
-                    repaint();
-                }
+                        // Switch current player if move was correct
+                        if (grid.counter != 4 || grid.createdKo) {
+                            PassCounter = 0;
+                            switchPlayer();
+                        } else
+                            isSuicide = true;
+                        repaint();
+                    }
+
                     else if (territorymode == true){
+                        grid.addMark(row, col, current_player);
 
                     }
                 }
