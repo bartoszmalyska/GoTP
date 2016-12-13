@@ -166,10 +166,10 @@ public class Grid {
                     }
                     neighbor.liberties++;
                 }
-                //int score = size(s.chain); will get score points for captured stones once java stops being java
-                if (getState(s.row, s.col) == GameBoard.State.BLACK){BlackScore = BlackScore + score;}
-                else if (getState(s.row, s.col) == GameBoard.State.WHITE){WhiteScore = WhiteScore + score;}
+                if (getState(s.row, s.col) == GameBoard.State.BLACK && counter!=4){WhiteScore++;}
+                else if (getState(s.row, s.col) == GameBoard.State.WHITE && counter!=4){BlackScore++;}
                 else continue;
+                System.out.println(BlackScore + " " + WhiteScore);
                 s.chain = null;
                 stones[s.row][s.col] = null;
             }
