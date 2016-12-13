@@ -1,5 +1,4 @@
 package go;
-
 /**
  * Provides game logic.
  *
@@ -16,15 +15,20 @@ public class Grid {
      * [row][column]
      */
     private Stone[][] stones;
+    private TerritoryMark [][] Marks;
     public int counter;
     public boolean isKo = false;
     public boolean createdKo = false;
     public Stone[] ko = new Stone[2];
     private int c = 0;
+    public int score = 0;
+    public int BlackScore = 0;
+    public int WhiteScore = 0;
 
     public Grid(int size) {
         SIZE = size;
         stones = new Stone[SIZE][SIZE];
+        Marks = new TerritoryMark[SIZE][SIZE];
     }
 
     /**
@@ -162,7 +166,10 @@ public class Grid {
                     }
                     neighbor.liberties++;
                 }
-
+                //int score = size(s.chain); will get score points for captured stones once java stops being java
+                if (getState(s.row, s.col) == GameBoard.State.BLACK){BlackScore = BlackScore + score;}
+                else if (getState(s.row, s.col) == GameBoard.State.WHITE){WhiteScore = WhiteScore + score;}
+                else continue;
                 s.chain = null;
                 stones[s.row][s.col] = null;
             }
@@ -179,6 +186,7 @@ public class Grid {
     public boolean isOccupied(int row, int col) {
         return stones[row][col] != null;
     }
+    public boolean isMarked(int row, int col) {return Marks[row][col] != null;}
 
     /**
      * Returns State (black/white) of given position or null if it's unoccupied.
@@ -202,5 +210,9 @@ public class Grid {
         if(stone.liberties==0 && chain.stones.size()+1>1 && chain.getLiberties()==0)
             return false;
         return true;
+    }
+    public void addMark(int row, int col, GameBoard.State state){
+        TerritoryMark newTerritoryMark = new TerritoryMark(row,col,state);
+        Marks [row][col] = newTerritoryMark;
     }
 }

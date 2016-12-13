@@ -39,6 +39,7 @@ public class GameBoard extends JPanel {
     private Point lastMove;
     private boolean isSuicide=false;
     private int PassCounter=0;
+    boolean territorymode = false;
 
     public GameBoard() {
         this.setFocusable(true);
@@ -48,56 +49,72 @@ public class GameBoard extends JPanel {
 
         // Black always starts
         current_player = State.BLACK;
+            this.addMouseListener(new MouseAdapter() {
 
-        this.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    // Converts to float for float division and then rounds to
+                    // provide nearest intersection.
+                    int row = Math.round((float) (e.getY() - BORDER_SIZE)
+                            / TILE_SIZE);
+                    int col = Math.round((float) (e.getX() - BORDER_SIZE)
+                            / TILE_SIZE);
 
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                // Converts to float for float division and then rounds to
-                // provide nearest intersection.
-                int row = Math.round((float) (e.getY() - BORDER_SIZE)
-                        / TILE_SIZE);
-                int col = Math.round((float) (e.getX() - BORDER_SIZE)
-                        / TILE_SIZE);
+                    // DEBUG INFO
+                    // System.out.println(String.format("y: %d, x: %d", row, col));
 
-                // DEBUG INFO
-                // System.out.println(String.format("y: %d, x: %d", row, col));
+                    // Check wherever it's valid
+                    if (row >= SIZE || col >= SIZE || row < 0 || col < 0) {
+                        return;
+                    }
 
-                // Check wherever it's valid
-                if (row >= SIZE || col >= SIZE || row < 0 || col < 0) {
-                    return;
+                    if (grid.isOccupied(row, col)) {
+                        return;
+                    }
+                    if (territorymode == false) {
+
+                        grid.addStone(row, col, current_player);
+                        lastMove = new Point(col, row);
+
+                        // Switch current player if move was correct
+                        if (grid.counter != 4 || grid.createdKo) {
+                            PassCounter = 0;
+                            switchPlayer();
+                        } else
+                            isSuicide = true;
+                        repaint();
+                    }
+
+                    else if (territorymode == true){
+                        if (grid.isMarked(row, col)){
+                            return;
+                        }
+                        else
+                        grid.addMark(row, col, current_player);
+                        lastMove = new Point(col, row);
+                        switchPlayer();
+                        repaint();
+
+                    }
                 }
+            });
+            this.addKeyListener(new KeyAdapter() {
 
-                if (grid.isOccupied(row, col)) {
-                    return;
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    int key = e.getKeyCode();
+                    if (key == KeyEvent.VK_F1) {
+                        PassCounter++;
+                        if (PassCounter == 2) {
+                            territorymode = true;
+                            System.out.println("entering territory mode");
+                        } else
+                            switchPlayer();
+                    }
                 }
+            });
+        }
 
-                grid.addStone(row, col, current_player);
-                lastMove = new Point(col, row);
-
-                // Switch current player if move was correct
-                if(grid.counter!=4 || grid.createdKo) {
-                    PassCounter=0;
-                    switchPlayer();
-                }
-                else
-                    isSuicide=true;
-                repaint();
-            }
-        });
-        //to powinno zmieniać gracza po naciśnięciu F1 ale java się niezgadza -.-//
-        this.addKeyListener(new KeyAdapter() {
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                int key = e.getKeyCode();
-                if (key == KeyEvent.VK_F1){
-                    PassCounter ++;
-                    //if (PassCounter == 2) hook na zmiane trybu na dogadywanie terytorium
-                    switchPlayer();}
-            }
-        });
-    }
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -121,16 +138,29 @@ public class GameBoard extends JPanel {
         // Iterate over intersections
         for (int row = 0; row < SIZE; row++) {
             for (int col = 0; col < SIZE; col++) {
-                State state = grid.getState(row, col);
-                if (state != null) {
-                    if (state == State.BLACK) {
-                        g2.setColor(Color.BLACK);
-                    } else {
-                        g2.setColor(Color.WHITE);
+                if (grid.isOccupied(row, col)) {
+                    State state = grid.getState(row, col);
+                    if (state != null) {
+                        if (state == State.BLACK) {
+                            g2.setColor(Color.BLACK);
+                        } else {
+                            g2.setColor(Color.WHITE);
+                        }
+                        g2.fillOval(col * TILE_SIZE + BORDER_SIZE - TILE_SIZE / 2,
+                                row * TILE_SIZE + BORDER_SIZE - TILE_SIZE / 2,
+                                TILE_SIZE, TILE_SIZE);
                     }
-                    g2.fillOval(col * TILE_SIZE + BORDER_SIZE - TILE_SIZE / 2,
-                            row * TILE_SIZE + BORDER_SIZE - TILE_SIZE / 2,
-                            TILE_SIZE, TILE_SIZE);
+                } else if (grid.isMarked(row, col)) {
+                    State state = grid.getState(row, col);
+                    if (state != null) {
+                        if (state == State.BLACK) {
+                            g2.setColor(Color.BLACK);
+                        } else {
+                            g2.setColor(Color.WHITE);
+                        }
+                        g2.fillRect(col * TILE_SIZE + BORDER_SIZE - TILE_SIZE, row * TILE_SIZE + BORDER_SIZE - TILE_SIZE, TILE_SIZE, TILE_SIZE);
+
+                    }
                 }
             }
         }

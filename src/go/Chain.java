@@ -9,9 +9,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class Chain {
 
     public CopyOnWriteArrayList<Stone> stones;
-    public GameBoard.State state;
 
-    public Chain(GameBoard.State state) {
+    public Chain() {
         stones = new CopyOnWriteArrayList<>();
     }
 
