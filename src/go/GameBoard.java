@@ -138,16 +138,29 @@ public class GameBoard extends JPanel {
         // Iterate over intersections
         for (int row = 0; row < SIZE; row++) {
             for (int col = 0; col < SIZE; col++) {
-                State state = grid.getState(row, col);
-                if (state != null) {
-                    if (state == State.BLACK) {
-                        g2.setColor(Color.BLACK);
-                    } else {
-                        g2.setColor(Color.WHITE);
+                if (grid.isOccupied(row, col)) {
+                    State state = grid.getState(row, col);
+                    if (state != null) {
+                        if (state == State.BLACK) {
+                            g2.setColor(Color.BLACK);
+                        } else {
+                            g2.setColor(Color.WHITE);
+                        }
+                        g2.fillOval(col * TILE_SIZE + BORDER_SIZE - TILE_SIZE / 2,
+                                row * TILE_SIZE + BORDER_SIZE - TILE_SIZE / 2,
+                                TILE_SIZE, TILE_SIZE);
                     }
-                    g2.fillOval(col * TILE_SIZE + BORDER_SIZE - TILE_SIZE / 2,
-                            row * TILE_SIZE + BORDER_SIZE - TILE_SIZE / 2,
-                            TILE_SIZE, TILE_SIZE);
+                } else if (grid.isMarked(row, col)) {
+                    State state = grid.getState(row, col);
+                    if (state != null) {
+                        if (state == State.BLACK) {
+                            g2.setColor(Color.BLACK);
+                        } else {
+                            g2.setColor(Color.WHITE);
+                        }
+                        g2.fillRect();
+
+                    }
                 }
             }
         }
