@@ -158,7 +158,7 @@ public class GameBoard extends JPanel {
                         } else {
                             g2.setColor(Color.WHITE);
                         }
-                        g2.fillRect(col, row, TILE_SIZE, TILE_SIZE);
+                        g2.fillRect(col * TILE_SIZE + BORDER_SIZE - TILE_SIZE, row * TILE_SIZE + BORDER_SIZE - TILE_SIZE, TILE_SIZE, TILE_SIZE);
 
                     }
                 }
