@@ -39,7 +39,7 @@ public class GameBoard extends JPanel {
     private Point lastMove;
     private boolean isSuicide=false;
     private int PassCounter=0;
-    private boolean territorymode = false;
+    boolean territorymode = false;
 
     public GameBoard() {
         this.setFocusable(true);
@@ -92,7 +92,7 @@ public class GameBoard extends JPanel {
                         else
                         grid.addMark(row, col, current_player);
                         lastMove = new Point(col, row);
-                        switchPlayer();;
+                        switchPlayer();
                         repaint();
 
                     }
@@ -106,7 +106,7 @@ public class GameBoard extends JPanel {
                     if (key == KeyEvent.VK_F1) {
                         PassCounter++;
                         if (PassCounter == 2) {
-                            boolean territorymode = true;
+                            territorymode = true;
                             System.out.println("entering territory mode");
                         } else
                             switchPlayer();
@@ -158,7 +158,7 @@ public class GameBoard extends JPanel {
                         } else {
                             g2.setColor(Color.WHITE);
                         }
-                        g2.fillRect();
+                        g2.fillRect(col, row, TILE_SIZE, TILE_SIZE);
 
                     }
                 }
