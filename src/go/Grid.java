@@ -19,6 +19,7 @@ public class Grid {
     public int counter;
     public boolean isKo = false;
     public boolean createdKo = false;
+    public boolean wasKo=false;
     public Stone[] ko = new Stone[2];
     private int c = 0;
     public int score = 0;
@@ -156,13 +157,14 @@ public class Grid {
                     if (neighbor == null) {
                         continue;
                     }
-                    if(neighbor.liberties==0  && neighbor.state!=s.state)
+                    if((neighbor.liberties==0  && neighbor.state!=s.state) || (wasKo && (ko[1].row==s.row && ko[1].col==s.col)))
                     {
                         createdKo=true;
                         s.liberties++;
                         ko[0]=s;
                         ko[1]=neighbor;
                         c=2;
+                        wasKo=true;
                     }
                     neighbor.liberties++;
                 }
