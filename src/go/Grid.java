@@ -1,5 +1,4 @@
 package go;
-
 /**
  * Provides game logic.
  *
@@ -21,6 +20,9 @@ public class Grid {
     public boolean createdKo = false;
     public Stone[] ko = new Stone[2];
     private int c = 0;
+    public int score = 0;
+    public int BlackScore = 0;
+    public int WhiteScore = 0;
 
     public Grid(int size) {
         SIZE = size;
@@ -162,7 +164,10 @@ public class Grid {
                     }
                     neighbor.liberties++;
                 }
-
+                int score = size(s.chain);
+                if (getState(s.row, s.col) == GameBoard.State.BLACK){BlackScore = BlackScore + score;}
+                else if (getState(s.row, s.col) == GameBoard.State.WHITE){WhiteScore = WhiteScore + score;}
+                else continue;
                 s.chain = null;
                 stones[s.row][s.col] = null;
             }
