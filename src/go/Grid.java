@@ -15,6 +15,7 @@ public class Grid {
      * [row][column]
      */
     private Stone[][] stones;
+    private TerritoryMark [][] Marks;
     public int counter;
     public boolean isKo = false;
     public boolean createdKo = false;
@@ -27,6 +28,7 @@ public class Grid {
     public Grid(int size) {
         SIZE = size;
         stones = new Stone[SIZE][SIZE];
+        Marks = new TerritoryMark[SIZE][SIZE];
     }
 
     /**
@@ -184,7 +186,7 @@ public class Grid {
     public boolean isOccupied(int row, int col) {
         return stones[row][col] != null;
     }
-    public boolean isMarked(int row, int col) {return Territory.Marks[row][col] != null;}
+    public boolean isMarked(int row, int col) {return Marks[row][col] != null;}
 
     /**
      * Returns State (black/white) of given position or null if it's unoccupied.
@@ -211,6 +213,6 @@ public class Grid {
     }
     public void addMark(int row, int col, GameBoard.State state){
         TerritoryMark newTerritoryMark = new TerritoryMark(row,col,state);
-        Territory.Marks [row][col] = newTerritoryMark;
+        Marks [row][col] = newTerritoryMark;
     }
 }
