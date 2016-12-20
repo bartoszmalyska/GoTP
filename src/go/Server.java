@@ -16,10 +16,11 @@ Szablon dla QueryArr
 2 - z botem czy nie (z botem to single)
 3 - adres GameRoom'a
  */
+
 public class Server{
     int GameRoomPort = 9091;
     String[] QueryArr;
-    public static void handlingserver (String[] args) throws IOException{
+    public void handlingserver(String[] args) throws IOException{
         ServerSocket listener = new ServerSocket(9090);
         System.out.print("wstał");
         try{
@@ -32,10 +33,7 @@ public class Server{
                 while((Query = reader.readLine()) != null){list.add(Query);}
                 String[] QueryArr = list.toArray(new String[0]);
                 if (QueryArr[0] == "NEW"){
-                    String first = QueryArr[1];
-                    int size = Integer.parseInt(first);
-                    String Second = QueryArr[2];
-
+                    (new GameRoom()).start();
                 }
             }
         }
@@ -43,15 +41,11 @@ public class Server{
 
         }
     }
-    public void GameRoom(String[] args) throws IOException{
-        ServerSocket GameRoomListener = new ServerSocket(GameRoomPort);
-        System.out.print("wstał");
-
+    class GameRoom extends Thread {
+        public void GameRoom(String[] args) throws IOException{
+            ServerSocket GameRoomListener = new ServerSocket(GameRoomPort);
+            System.out.print("wstał");
+        }
     }
-
-}
-
-
-class Connection{
 
 }
