@@ -10,7 +10,7 @@ package go;
  */
 public class Grid {
 
-    private final int SIZE;
+    private final int size;
     /**
      * [row][column]
      */
@@ -26,9 +26,9 @@ public class Grid {
     public int WhiteScore = 0;
 
     public Grid(int size) {
-        SIZE = size;
-        stones = new Stone[SIZE][SIZE];
-        Marks = new TerritoryMark[SIZE][SIZE];
+        this.size = size;
+        stones = new Stone[size][size];
+        Marks = new TerritoryMark[size][size];
     }
 
     /**
@@ -64,7 +64,7 @@ public class Grid {
                 neighbors[0] = stones[row - 1][col];
             } else
                 counter++;
-            if (row < SIZE - 1) {
+            if (row < size - 1) {
                 neighbors[1] = stones[row + 1][col];
             } else
                 counter++;
@@ -72,7 +72,7 @@ public class Grid {
                 neighbors[2] = stones[row][col - 1];
             } else
                 counter++;
-            if (col < SIZE - 1) {
+            if (col < size - 1) {
                 neighbors[3] = stones[row][col + 1];
             } else
                 counter++;
@@ -140,13 +140,13 @@ public class Grid {
                 if (s.row > 0) {
                     neighbors[0] = stones[s.row - 1][s.col];
                 }
-                if (s.row < SIZE - 1) {
+                if (s.row < size - 1) {
                     neighbors[1] = stones[s.row + 1][s.col];
                 }
                 if (s.col > 0) {
                     neighbors[2] = stones[s.row][s.col - 1];
                 }
-                if (s.col < SIZE - 1) {
+                if (s.col < size - 1) {
                     neighbors[3] = stones[s.row][s.col + 1];
                 }
                 for (Stone neighbor : neighbors) {
@@ -226,8 +226,8 @@ public class Grid {
         int SecondStoneFound = 0;
         int SecondStoneX = -2;
         int SecondStoneY = -2;
-        int row = GameBoard.SIZE;
-        int column = GameBoard.SIZE;
+        int row = size;
+        int column = size;
         for (int rowiterator = 0; rowiterator > row; rowiterator++) {
             for (int columniterator = 0; columniterator > column; columniterator++) {
                 if (FirstStoneFound == 0) {

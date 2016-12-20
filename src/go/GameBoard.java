@@ -8,7 +8,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 /**
  * Provides I/O.
- * TODO Ko powoduje ze gracz ma dwie tury z rzędu
  *
  */
 public class GameBoard extends JPanel {
@@ -17,11 +16,12 @@ public class GameBoard extends JPanel {
     /**
      * Number of rows/columns.
      */
-    public static final int SIZE = 9;
     /**
      * Number of tiles in row/column. (Size - 1)
      */
-    public static final int N_OF_TILES = SIZE - 1;
+    public static int size;
+
+    public static int n_of_tiles;
     public static final int TILE_SIZE = 40;
     public static final int BORDER_SIZE = TILE_SIZE;
 
@@ -41,87 +41,89 @@ public class GameBoard extends JPanel {
     private int PassCounter=0;
     boolean territorymode = false;
 
-    public GameBoard() {
+    public GameBoard(int size) {
+        this.size=size;
+        n_of_tiles=size-1;
         this.setFocusable(true);
         this.requestFocusInWindow();
         this.setBackground(Color.ORANGE);
-        grid = new Grid(SIZE);
+        grid = new Grid(size);
 
         // Black always starts
         current_player = State.BLACK;
-            this.addMouseListener(new MouseAdapter() {
+        this.addMouseListener(new MouseAdapter() {
 
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    // Converts to float for float division and then rounds to
-                    // provide nearest intersection.
-                    int row = Math.round((float) (e.getY() - BORDER_SIZE)
-                            / TILE_SIZE);
-                    int col = Math.round((float) (e.getX() - BORDER_SIZE)
-                            / TILE_SIZE);
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                // Converts to float for float division and then rounds to
+                // provide nearest intersection.
+                int row = Math.round((float) (e.getY() - BORDER_SIZE)
+                        / TILE_SIZE);
+                int col = Math.round((float) (e.getX() - BORDER_SIZE)
+                        / TILE_SIZE);
 
-                    // DEBUG INFO
-                    // System.out.println(String.format("y: %d, x: %d", row, col));
+                // DEBUG INFO
+                // System.out.println(String.format("y: %d, x: %d", row, col));
 
-                    // Check wherever it's valid
-                    if (row >= SIZE || col >= SIZE || row < 0 || col < 0) {
-                        return;
-                    }
+                // Check wherever it's valid
+                if (row >= size || col >= size || row < 0 || col < 0) {
+                    return;
+                }
 
-                    if (grid.isOccupied(row, col)) {
-                        return;
-                    }
-                    if (territorymode == false) {
+                if (grid.isOccupied(row, col)) {
+                    return;
+                }
+                if (territorymode == false) {
 
-                        grid.addStone(row, col, current_player);
-                        lastMove = new Point(col, row);
+                    grid.addStone(row, col, current_player);
+                    lastMove = new Point(col, row);
 
-                        // Switch current player if move was correct
-                        if (grid.counter != 4 || grid.createdKo) {
-                            PassCounter = 0;
-                            switchPlayer();
-                        } else
-                            isSuicide = true;
-                        repaint();
-                    }
-
-                    else if (territorymode == true){
-                        if (grid.isMarked(row, col)){
-                            return;
-                        }
-                        else
-                        grid.addMark(row, col, current_player);
-                        lastMove = new Point(col, row);
-                        PassCounter = 2;
+                    // Switch current player if move was correct
+                    if (grid.counter != 4 || grid.createdKo) {
+                        PassCounter = 0;
                         switchPlayer();
-                        repaint();
-
-                    }
+                    } else
+                        isSuicide = true;
+                    repaint();
                 }
-            });
-            this.addKeyListener(new KeyAdapter() {
 
-                @Override
-                public void keyPressed(KeyEvent e) {
-                    int key = e.getKeyCode();
-                    if (key == KeyEvent.VK_F1) {
-                        PassCounter++;
-                        if (PassCounter == 2 && territorymode != true) {
-                            territorymode = true;
-                            System.out.println("entering territory mode");
-                            //Grid.Automark();
-                        }
-                        else if(territorymode == true){
-                            if(PassCounter == 4){
-                                //Wywołanie sfokusowanego Windialogu z BlackScore/WhiteScore
-                            }
-                        }
-                        else
-                            switchPlayer();
+                else if (territorymode == true){
+                    if (grid.isMarked(row, col)){
+                        return;
                     }
+                    else
+                        grid.addMark(row, col, current_player);
+                    lastMove = new Point(col, row);
+                    PassCounter = 2;
+                    switchPlayer();
+                    repaint();
+
                 }
-            });
-        }
+            }
+        });
+        this.addKeyListener(new KeyAdapter() {
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                int key = e.getKeyCode();
+                if (key == KeyEvent.VK_F1) {
+                    PassCounter++;
+                    if (PassCounter == 2 && territorymode != true) {
+                        territorymode = true;
+                        System.out.println("entering territory mode");
+                        //Grid.Automark();
+                    }
+                    else if(territorymode == true){
+                        if(PassCounter == 4){
+                            //Wywołanie sfokusowanego Windialogu z BlackScore/WhiteScore
+                        }
+                    }
+                    else
+                        switchPlayer();
+                }
+            }
+        });
+    }
 
 
     @Override
@@ -134,18 +136,18 @@ public class GameBoard extends JPanel {
 
         g2.setColor(Color.BLACK);
         // Draw rows.
-        for (int i = 0; i < SIZE; i++) {
+        for (int i = 0; i < size; i++) {
             g2.drawLine(BORDER_SIZE, i * TILE_SIZE + BORDER_SIZE, TILE_SIZE
-                    * N_OF_TILES + BORDER_SIZE, i * TILE_SIZE + BORDER_SIZE);
+                    * n_of_tiles + BORDER_SIZE, i * TILE_SIZE + BORDER_SIZE);
         }
         // Draw columns.
-        for (int i = 0; i < SIZE; i++) {
+        for (int i = 0; i < size; i++) {
             g2.drawLine(i * TILE_SIZE + BORDER_SIZE, BORDER_SIZE, i * TILE_SIZE
-                    + BORDER_SIZE, TILE_SIZE * N_OF_TILES + BORDER_SIZE);
+                    + BORDER_SIZE, TILE_SIZE * n_of_tiles + BORDER_SIZE);
         }
         // Iterate over intersections
-        for (int row = 0; row < SIZE; row++) {
-            for (int col = 0; col < SIZE; col++) {
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
                 if (grid.isOccupied(row, col)) {
                     State state = grid.getState(row, col);
                     if (state != null) {
@@ -183,8 +185,8 @@ public class GameBoard extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(N_OF_TILES * TILE_SIZE + BORDER_SIZE * 2,
-                N_OF_TILES * TILE_SIZE + BORDER_SIZE * 2);
+        return new Dimension(n_of_tiles * TILE_SIZE + BORDER_SIZE * 2,
+                n_of_tiles * TILE_SIZE + BORDER_SIZE * 2);
     }
     public void switchPlayer()
     {

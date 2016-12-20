@@ -18,11 +18,12 @@ public class Stone {
         this.state = state;
         this.row = row;
         this.col = col;
-        if((col==GameBoard.SIZE-1 || col==0) && (row==0 || row == GameBoard.SIZE-1))
+        if((col==GameBoard.size-1 || col==0) && (row==0 || row == GameBoard.size-1))
             liberties=2;
-        else if(col==GameBoard.SIZE-1 || row == GameBoard.SIZE-1 || col==0 || row == 0)
+        else if(col==GameBoard.size-1 || row == GameBoard.size-1 || col==0 || row == 0)
             liberties=3;
         else
             liberties=4;
     }
 }
+
