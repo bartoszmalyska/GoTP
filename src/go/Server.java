@@ -13,9 +13,10 @@ import java.util.List;
 Szablon dla QueryArr
 0 - NEW lub JOIN
 1 - Size gameboarda
-2 - z botem czy nie
+2 - z botem czy nie (z botem to single)
  */
 public class Server{
+    int GameRoomPort = 9091;
     public static void handlingserver (String[] args) throws IOException{
         ServerSocket listener = new ServerSocket(9090);
         System.out.print("wstał");
@@ -29,6 +30,9 @@ public class Server{
                 while((Query = reader.readLine()) != null){list.add(Query);}
                 String[] QueryArr = list.toArray(new String[0]);
                 if (QueryArr[0] == "NEW"){
+                    String first = QueryArr[1];
+                    int size = Integer.parseInt(first);
+                    String Second = QueryArr[2];
 
                 }
             }
@@ -37,8 +41,14 @@ public class Server{
 
         }
     }
+    public void GameRoom(String[] args) throws IOException{
+        ServerSocket GameRoomListener = new ServerSocket(GameRoomPort);
+        System.out.print("wstał");
+
+    }
 
 }
+
 
 class Connection{
 
