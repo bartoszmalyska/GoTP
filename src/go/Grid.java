@@ -15,14 +15,13 @@ public class Grid {
      * [row][column]
      */
     private Stone[][] stones;
-    private TerritoryMark [][] Marks;
+    private TerritoryMark[][] Marks;
     public int counter;
     public boolean isKo = false;
     public boolean createdKo = false;
-    public boolean wasKo=false;
+    public boolean wasKo = false;
     public Stone[] ko = new Stone[2];
     private int c = 0;
-    public int score = 0;
     public int BlackScore = 0;
     public int WhiteScore = 0;
 
@@ -97,16 +96,14 @@ public class Grid {
                     finalChain.join(neighbor.chain);
                 }
             }
-            if(checkChain(finalChain,newStone))
-            {
+            if (checkChain(finalChain, newStone)) {
                 finalChain.addStone(newStone);
                 if (counter == 4) {
                     checkStone(newStone);
-                    if(newStone.liberties>0)
+                    if (newStone.liberties > 0)
                         counter--;
                 }
-            }
-            else {
+            } else {
                 counter = 4;
                 newStone.chain = null;
                 stones[newStone.row][newStone.col] = null;
@@ -157,20 +154,21 @@ public class Grid {
                     if (neighbor == null) {
                         continue;
                     }
-                    if((neighbor.liberties==0  && neighbor.state!=s.state) || (wasKo && (ko[1].row==s.row && ko[1].col==s.col)))
-                    {
-                        createdKo=true;
+                    if ((neighbor.liberties == 0 && neighbor.state != s.state) || (wasKo && (ko[1].row == s.row && ko[1].col == s.col))) {
+                        createdKo = true;
                         s.liberties++;
-                        ko[0]=s;
-                        ko[1]=neighbor;
-                        c=2;
-                        wasKo=true;
+                        ko[0] = s;
+                        ko[1] = neighbor;
+                        c = 2;
+                        wasKo = true;
                     }
                     neighbor.liberties++;
                 }
-                if (getState(s.row, s.col) == GameBoard.State.BLACK && counter!=4){WhiteScore++;}
-                else if (getState(s.row, s.col) == GameBoard.State.WHITE && counter!=4){BlackScore++;}
-                else continue;
+                if (getState(s.row, s.col) == GameBoard.State.BLACK && counter != 4) {
+                    WhiteScore++;
+                } else if (getState(s.row, s.col) == GameBoard.State.WHITE && counter != 4) {
+                    BlackScore++;
+                } else continue;
                 System.out.println(BlackScore + " " + WhiteScore);
                 s.chain = null;
                 stones[s.row][s.col] = null;
@@ -188,7 +186,10 @@ public class Grid {
     public boolean isOccupied(int row, int col) {
         return stones[row][col] != null;
     }
-    public boolean isMarked(int row, int col) {return Marks[row][col] != null;}
+
+    public boolean isMarked(int row, int col) {
+        return Marks[row][col] != null;
+    }
 
     /**
      * Returns State (black/white) of given position or null if it's unoccupied.
@@ -203,18 +204,111 @@ public class Grid {
         if (stone == null) {
             return null;
         } else {
-            // System.out.println("getState != null");
             return stone.state;
         }
     }
-    public boolean checkChain(Chain chain, Stone stone)
-    {
-        if(stone.liberties==0 && chain.stones.size()+1>1 && chain.getLiberties()==0)
+
+    public boolean checkChain(Chain chain, Stone stone) {
+        if (stone.liberties == 0 && chain.stones.size() + 1 > 1 && chain.getLiberties() == 0)
             return false;
         return true;
     }
-    public void addMark(int row, int col, GameBoard.State state){
-        TerritoryMark newTerritoryMark = new TerritoryMark(row,col,state);
-        Marks [row][col] = newTerritoryMark;
+
+    public void addMark(int row, int col, GameBoard.State state) {
+        TerritoryMark newTerritoryMark = new TerritoryMark(row, col, state);
+        Marks[row][col] = newTerritoryMark;
+    }
+
+    public void Automark() {
+        int FirstStoneX = -1;
+        int FirstStoneY = -1;
+        int FirstStoneFound = 0;
+        int SecondStoneFound = 0;
+        int SecondStoneX = -2;
+        int SecondStoneY = -2;
+        int row = GameBoard.SIZE;
+        int column = GameBoard.SIZE;
+        for (int rowiterator = 0; rowiterator > row; rowiterator++) {
+            for (int columniterator = 0; columniterator > column; columniterator++) {
+                if (FirstStoneFound == 0) {
+                    if (isOccupied(rowiterator, columniterator) == true) {
+                        FirstStoneFound = 1;
+                        FirstStoneX = rowiterator;
+                        FirstStoneY = columniterator;
+                    }
+                } else if (FirstStoneFound == 1) {
+                    if (rowiterator == FirstStoneX) {
+                        if (isOccupied(rowiterator, columniterator) == true) {
+                            if (getState(rowiterator, columniterator) == getState(FirstStoneX, FirstStoneY)) {
+                                SecondStoneFound = 1;
+                                SecondStoneX = rowiterator;
+                                SecondStoneY = columniterator;
+                            }
+                        }
+                    } else {
+                        FirstStoneFound = 0;
+                        FirstStoneX = -1;
+                        FirstStoneY = -1;
+                    }
+                } else if (FirstStoneFound == 1 && SecondStoneFound == 1) {
+                    if (getState(FirstStoneX, FirstStoneY) == getState(SecondStoneX, SecondStoneY)) {
+                        for (int i = FirstStoneX; i > SecondStoneX; i++) {
+                            for (int j = FirstStoneY; j > SecondStoneY; j++) {
+                                addMark(i, j, getState(FirstStoneX, FirstStoneY));
+                            }
+                        }
+                    } else {
+                        FirstStoneFound = 0;
+                        FirstStoneX = -1;
+                        FirstStoneY = -1;
+                        SecondStoneFound = 0;
+                        SecondStoneX = -1;
+                        SecondStoneY = -1;
+                    }
+                }
+            }
+        }
+        for (int columniterator = 0; columniterator > column; columniterator++) {
+            for (int rowiterator = 0; rowiterator > row; rowiterator++) {
+                if (FirstStoneFound == 0) {
+                    if (isMarked(rowiterator, columniterator)) {
+                        Marks[rowiterator][columniterator] = null;
+                    } else if (isOccupied(rowiterator, columniterator) == true) {
+                        FirstStoneFound = 1;
+                        FirstStoneX = rowiterator;
+                        FirstStoneY = columniterator;
+                    }
+                } else if (FirstStoneFound == 1) {
+                    if (columniterator == FirstStoneY) {
+                        if (isOccupied(rowiterator, columniterator) == true) {
+                            if (getState(rowiterator, columniterator) == getState(FirstStoneX, FirstStoneY)) {
+                                SecondStoneFound = 1;
+                                SecondStoneX = rowiterator;
+                                SecondStoneY = columniterator;
+                            }
+                        }
+                    } else {
+                        FirstStoneFound = 0;
+                        FirstStoneX = -1;
+                        FirstStoneY = -1;
+                    }
+                } else if (FirstStoneFound == 1 && SecondStoneFound == 1) {
+                    if (getState(FirstStoneX, FirstStoneY) == getState(SecondStoneX, SecondStoneY)) {
+                        for (int i = FirstStoneY; i > SecondStoneY; i++) {
+                            for (int j = FirstStoneX; j > SecondStoneX; j++) {
+                                addMark(i, j, getState(FirstStoneX, FirstStoneY));
+                            }
+                        }
+                    }
+                } else {
+                    FirstStoneFound = 0;
+                    FirstStoneX = -1;
+                    FirstStoneY = -1;
+                    SecondStoneFound = 0;
+                    SecondStoneX = -1;
+                    SecondStoneY = -1;
+                }
+            }
+        }
     }
 }

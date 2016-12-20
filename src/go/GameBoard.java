@@ -92,6 +92,7 @@ public class GameBoard extends JPanel {
                         else
                         grid.addMark(row, col, current_player);
                         lastMove = new Point(col, row);
+                        PassCounter = 2;
                         switchPlayer();
                         repaint();
 
@@ -105,10 +106,17 @@ public class GameBoard extends JPanel {
                     int key = e.getKeyCode();
                     if (key == KeyEvent.VK_F1) {
                         PassCounter++;
-                        if (PassCounter == 2) {
+                        if (PassCounter == 2 && territorymode != true) {
                             territorymode = true;
                             System.out.println("entering territory mode");
-                        } else
+                            //Grid.Automark();
+                        }
+                        else if(territorymode == true){
+                            if(PassCounter == 4){
+                                //Wywołanie sfokusowanego Windialogu z BlackScore/WhiteScore
+                            }
+                        }
+                        else
                             switchPlayer();
                     }
                 }
