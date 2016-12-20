@@ -7,9 +7,24 @@ import javax.swing.SwingConstants;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 
 public class BasicGUI extends JFrame {
-    public BasicGUI() {
+
+    private Socket socket;
+    private BufferedReader in;
+    private PrintWriter out;
+    private static int port = 9090;
+
+    public BasicGUI(String serverAddress) throws IOException {
+        socket = new Socket(serverAddress, port);
+        in = new BufferedReader(new InputStreamReader(
+                socket.getInputStream()));
+        out = new PrintWriter(socket.getOutputStream(), true);
         this.setTitle("Go");
         this.setSize(400, 200);
         this.setResizable(false);
@@ -24,7 +39,14 @@ public class BasicGUI extends JFrame {
         JButton btnNewGame = new JButton("New Game");
         btnNewGame.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent arg0) {
-                NewGame newGame = new NewGame();
+                out.println("NEW");
+                NewGame newGame = null;
+                try {
+                    newGame = new NewGame(serverAddress,port);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.out.println("Incorrect Server Address");
+                }
                 newGame.setVisible(true);
             }
         });
@@ -34,6 +56,7 @@ public class BasicGUI extends JFrame {
         JButton btnLoad = new JButton("Load Game");
         btnLoad.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                out.println("JOIN");
             }
         });
         btnLoad.setBounds(138, 69, 102, 49);

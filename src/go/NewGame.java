@@ -9,10 +9,24 @@ import javax.swing.SpinnerListModel;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class NewGame extends JDialog {
-    public NewGame()
-    {
+
+    private Socket socket;
+    private BufferedReader in;
+    private PrintWriter out;
+
+    public NewGame(String serverAddress, int port) throws IOException {
+        socket = new Socket(serverAddress, port);
+        in = new BufferedReader(new InputStreamReader(
+                socket.getInputStream()));
+        out = new PrintWriter(socket.getOutputStream(), true);
         this.setSize(330, 250);
         this.setResizable(false);
         getContentPane().setLayout(null);
@@ -51,8 +65,15 @@ public class NewGame extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 int gridSize = Integer.parseInt((String)spinner.getValue());
                 String mode = (String)spinner_1.getValue();
-                Game game = new Game(gridSize,mode);
-                game.setVisible(true);
+                out.println(String.valueOf(gridSize));
+                out.println(mode);
+                try {
+                    Game game = new Game(gridSize, mode, serverAddress, port);
+                    game.setVisible(true);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                    System.out.println("Incorrect Server Address");
+                }
                 dispose();
             }
         });
@@ -62,6 +83,7 @@ public class NewGame extends JDialog {
         JButton btnCancel = new JButton("Cancel");
         btnCancel.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                out.println("CANCEL");
                 dispose();
             }
         });
