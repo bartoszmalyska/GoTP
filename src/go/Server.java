@@ -4,6 +4,7 @@ package go;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -28,12 +29,18 @@ public class Server{
                 Socket socket = listener.accept();
                 System.out.print("dostał");
                 BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
                 String Query;
                 List<String> list = new ArrayList<String>();
                 while((Query = reader.readLine()) != null){list.add(Query);}
-                String[] QueryArr = list.toArray(new String[0]);
+                QueryArr = list.toArray(new String[0]);
                 if (QueryArr[0] == "NEW"){
                     (new GameRoom()).start();
+                    GameRoomPort++;
+                }
+                else if (QueryArr[0] == "JOIN"){
+                    //@Todo tu będzie podawanie print do socketa adresu na który ma się połaczyć bo zamknięicu tego połaczenia
+
                 }
             }
         }
@@ -45,6 +52,13 @@ public class Server{
         public void GameRoom(String[] args) throws IOException{
             ServerSocket GameRoomListener = new ServerSocket(GameRoomPort);
             System.out.print("wstał");
+            try{
+                while(true){
+                    Socket socket = GameRoomListener.accept();
+                }
+            }finally {
+
+            }
         }
     }
 

@@ -111,7 +111,7 @@ public class GameBoard extends JPanel {
                     if (PassCounter == 2 && territorymode != true) {
                         territorymode = true;
                         System.out.println("entering territory mode");
-                        //Grid.Automark();
+                        Grid.Automark();
                     }
                     else if(territorymode == true){
                         if(PassCounter == 4){
