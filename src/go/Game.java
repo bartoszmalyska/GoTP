@@ -1,4 +1,4 @@
-package go
+package go;
 
 
 import javax.swing.*;
