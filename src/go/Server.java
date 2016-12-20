@@ -55,6 +55,11 @@ public class Server{
             try{
                 while(true){
                     Socket socket = GameRoomListener.accept();
+                    System.out.print("dostał");
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
+                    int size = Integer.parseInt(QueryArr[2]);
+                    String mode = QueryArr[3];
                 }
             }finally {
 
