@@ -14,9 +14,11 @@ Szablon dla QueryArr
 0 - NEW lub JOIN
 1 - Size gameboarda
 2 - z botem czy nie (z botem to single)
+3 - adres GameRoom'a
  */
 public class Server{
     int GameRoomPort = 9091;
+    String[] QueryArr;
     public static void handlingserver (String[] args) throws IOException{
         ServerSocket listener = new ServerSocket(9090);
         System.out.print("wstał");
