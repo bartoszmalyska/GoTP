@@ -13,17 +13,13 @@ import java.net.Socket;
 
 public class Game extends JFrame {
 
-    /**public static final String TITLE = "";
-    public static final int BORDER_SIZE = 25;
-    private static int PORT = 8901;*//
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
 
-    public Game(int gridSize, String mode, String serverAddress)
-    {
+    public Game(int gridSize, String mode, String serverAddress, int port) throws IOException {
 
-        socket = new Socket(serverAddress/*,PORT*/);
+        socket = new Socket(serverAddress, port);
         in = new BufferedReader(new InputStreamReader(
                 socket.getInputStream()));
         out = new PrintWriter(socket.getOutputStream(), true);
