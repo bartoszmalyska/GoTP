@@ -2,7 +2,7 @@ package go;
 
 import javax.swing.*;
 import java.awt.*;
-import gui.*;
+
 
 /**
  * Builds UI and starts the game.
