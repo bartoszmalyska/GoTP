@@ -48,7 +48,6 @@ public class GameBoard extends JPanel {
         this.size=size;
         n_of_tiles=size-1;
         this.setFocusable(true);
-        this.requestFocusInWindow();
         this.setBackground(Color.ORANGE);
         grid = new Grid(size);
 
@@ -104,28 +103,7 @@ public class GameBoard extends JPanel {
                 }
             }
         });
-        this.addKeyListener(new KeyAdapter() {
 
-            @Override
-            public void keyPressed(KeyEvent e) {
-                int key = e.getKeyCode();
-                if (key == KeyEvent.VK_F1) {
-                    PassCounter++;
-                    if (PassCounter == 2 && territorymode != true) {
-                        territorymode = true;
-                        System.out.println("entering territory mode");
-                        Grid.Automark();
-                    }
-                    else if(territorymode == true){
-                        if(PassCounter == 4){
-                            //Wywołanie sfokusowanego Windialogu z BlackScore/WhiteScore
-                        }
-                    }
-                    else
-                        switchPlayer();
-                }
-            }
-        });
     }
 
 
@@ -199,6 +177,21 @@ public class GameBoard extends JPanel {
         } else {
             current_player = State.BLACK;
         }
+    }
+    public void pass() {
+        PassCounter++;
+        if (PassCounter == 2 && territorymode != true) {
+            territorymode = true;
+            System.out.println("entering territory mode");
+            grid.Automark();
+        }
+        else if(territorymode == true){
+            if(PassCounter == 4){
+                //Wywołanie sfokusowanego Windialogu z BlackScore/WhiteScore
+            }
+        }
+        else
+            switchPlayer();
     }
 
 }

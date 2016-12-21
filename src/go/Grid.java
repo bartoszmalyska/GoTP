@@ -168,7 +168,7 @@ public class Grid {
                     WhiteScore++;
                 } else if (getState(s.row, s.col) == GameBoard.State.WHITE && counter != 4) {
                     BlackScore++;
-                } else continue;
+                }
                 System.out.println(BlackScore + " " + WhiteScore);
                 s.chain = null;
                 stones[s.row][s.col] = null;
