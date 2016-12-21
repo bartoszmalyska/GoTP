@@ -26,25 +26,16 @@ public class Server {
         System.out.print("wstał");
         try {
             while (true) {
-                Socket socket = listener.accept();
-                System.out.print("dostał");
-                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
-                String Query;
-                List<String> list = new ArrayList<String>();
-                while ((Query = reader.readLine()) != null) {
-                    list.add(Query);
-                }
-                QueryArr = list.toArray(new String[0]);
-                if (QueryArr[0] == "NEW") {
-
-                } else if (QueryArr[0] == "JOIN") {
-
-
-                }
+                Game game = new  Game();
+                Player playerBlack = new Player(listener.accept(), GameBoard.State.BLACK);
+                Player playerWhite = new Player(listener.accept(), GameBoard.State.WHITE);
+                playerBlack.setOpponent(playerWhite);
+                playerWhite.setOpponent(playerBlack);
+                playerBlack.start();
+                playerWhite.start();
             }
         } finally {
-
+            listener.close();
         }
     }
 
@@ -54,6 +45,7 @@ public class Server {
         Socket socket;
         BufferedReader in;
         PrintWriter out;
+        Player currentPlayer;
 
         public Player(Socket socket, GameBoard.State color) {
             this.socket = socket;
