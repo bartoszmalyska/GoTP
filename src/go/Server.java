@@ -7,9 +7,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 /*
 Szablon dla QueryArr
 0 - NEW lub JOIN
@@ -19,18 +16,18 @@ Szablon dla QueryArr
  */
 
 public class Server {
-    String[] QueryArr;
 
     public void handlingserver(String[] args) throws IOException {
         ServerSocket listener = new ServerSocket(9090);
         System.out.print("wstał");
         try {
             while (true) {
-                Game game = new  Game();
-                Player playerBlack = new Player(listener.accept(), GameBoard.State.BLACK);
-                Player playerWhite = new Player(listener.accept(), GameBoard.State.WHITE);
+                GameSession game = new GameSession();
+                GameSession.Player playerBlack = game.new Player(listener.accept(), GameBoard.State.BLACK);
+                GameSession.Player playerWhite = game.new Player(listener.accept(), GameBoard.State.WHITE);
                 playerBlack.setOpponent(playerWhite);
                 playerWhite.setOpponent(playerBlack);
+                game.currentPlayer = playerBlack;
                 playerBlack.start();
                 playerWhite.start();
             }
@@ -39,52 +36,69 @@ public class Server {
         }
     }
 
-    class Player extends Thread {
-        GameBoard.State color;
-        Player opponent;
-        Socket socket;
-        BufferedReader in;
-        PrintWriter out;
+    class GameSession {
+
+        //konstruktor gry na serwerze//
+
         Player currentPlayer;
 
-        public Player(Socket socket, GameBoard.State color) {
-            this.socket = socket;
-            this.color = color;
-            try {
-                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out = new PrintWriter(socket.getOutputStream(), true);
-            } catch (IOException e) {
-                System.out.print("gracz spat");
+        class Player extends Thread {
+            GameBoard.State color;
+            Player opponent;
+            Socket socket;
+            BufferedReader in;
+            PrintWriter out;
+            Player currentPlayer;
+
+            public Player(Socket socket, GameBoard.State color) {
+                this.socket = socket;
+                this.color = color;
+                try {
+                    in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    out = new PrintWriter(socket.getOutputStream(), true);
+                } catch (IOException e) {
+                    System.out.print("gracz spat");
+                }
+
             }
 
-        }
+            public void setOpponent(Player opponent) {
+                this.opponent = opponent;
+            }
 
-        public void setOpponent(Player opponent) {
-            this.opponent = opponent;
-        }
-
-        public void run() {
-            try {
-                if (color == GameBoard.State.BLACK) {
-                    out.println("Ruch czarnego");
-                }
-                while (true) {
-                    String command = in.readLine();
-                    if (command.startsWith("place")) {
-                        if () {
-                            //tu damy to wykonanie ruchu czyli podpięcie logiki gry
-                        } else {
-                            out.println("?");
-                        }
-                    } else if (command.startsWith("Concede")){
-                        return;
+            public void run() {
+                try {
+                    if (color == GameBoard.State.BLACK) {
+                        out.println("Ruch czarnego");
                     }
-                }
-            }catch (IOException e){
-                System.out.println("Gracz spat bo : " + e);
-            } finally {
-                try {socket.close();} catch (IOException e){}
+                    while (true) {
+                        String command = in.readLine();
+                        if (command.startsWith("Addstone")) {
+                            if (isValid(row, col)== true) {
+                                Grid.addStone(row, col, color);
+                            } else {
+                                out.println("?");
+                            }
+                        } else if (command.startsWith("Concede")) {
+                            return;
+                        }else if (command.startsWith("Addmark")){
+                            if (isValid(row, col)== true){
+                                Grid.addMark(rowm, col, color);
+                            }
+
+                        }else if (command.startsWith("Pass")){
+                            GameBoard.switchPlayer();
+                        }
+                    }
+                } catch (IOException e) {
+                    System.out.println("Gracz spat bo : " + e);
+                } finally {
+                    try {
+                        socket.close();
+                    } catch (IOException e) {
+                    }
                 }
             }
         }
     }
+}
