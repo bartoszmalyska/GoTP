@@ -39,7 +39,7 @@ public class Server {
                 if (QueryArr[0] == "NEW") {
 
                 } else if (QueryArr[0] == "JOIN") {
-                    //@Todo tu będzie podawanie print do socketa adresu na który ma się połaczyć bo zamknięicu tego połaczenia
+
 
                 }
             }
@@ -47,20 +47,52 @@ public class Server {
 
         }
     }
-    class Player extends Thread{
+
+    class Player extends Thread {
         GameBoard.State color;
-        Player Opponent;
+        Player opponent;
         Socket socket;
         BufferedReader in;
         PrintWriter out;
-        public Player(Socket socket, GameBoard.State color){
+
+        public Player(Socket socket, GameBoard.State color) {
             this.socket = socket;
             this.color = color;
             try {
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out = new PrintWriter(socket.getOutputStream(), true);
-            } catch (IOException e){System.out.print("gracz spat");}
+            } catch (IOException e) {
+                System.out.print("gracz spat");
+            }
 
         }
+
+        public void setOpponent(Player opponent) {
+            this.opponent = opponent;
+        }
+
+        public void run() {
+            try {
+                if (color == GameBoard.State.BLACK) {
+                    out.println("Ruch czarnego");
+                }
+                while (true) {
+                    String command = in.readLine();
+                    if (command.startsWith("place")) {
+                        if () {
+                            //tu damy to wykonanie ruchu czyli podpięcie logiki gry
+                        } else {
+                            out.println("?");
+                        }
+                    } else if (command.startsWith("Concede")){
+                        return;
+                    }
+                }
+            }catch (IOException e){
+                System.out.println("Gracz spat bo : " + e);
+            } finally {
+                try {socket.close();} catch (IOException e){}
+                }
+            }
+        }
     }
-}
