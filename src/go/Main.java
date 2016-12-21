@@ -1,24 +1,25 @@
 package go;
 
-import javax.swing.*;
-import java.awt.*;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 
 /**
- * Builds UI and starts the game.
+ * Tutaj musi zaczynać klienta
  *
  */
 public class Main {
 
-    public static final String TITLE = "";
-    public static final int BORDER_SIZE = 25;
-
     public static void main(String[] args) {
-        new Main().init();
-    }
-
-    private void init() {
-        BasicGUI gui = new BasicGUI();
+        BasicGUI gui = null;
+        try {
+            gui = new BasicGUI("localhost:" + args[1]);
+        } catch (IOException e) {
+            System.out.println("Nie tworzy");
+        }
         gui.setVisible(true);
     }
 }

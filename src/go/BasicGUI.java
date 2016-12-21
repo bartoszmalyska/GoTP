@@ -56,7 +56,7 @@ public class BasicGUI extends JFrame {
         JButton btnLoad = new JButton("Load Game");
         btnLoad.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                out.println("JOIN");
+                out.println("JOIN")/
             }
         });
         btnLoad.setBounds(138, 69, 102, 49);

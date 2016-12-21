@@ -65,8 +65,7 @@ public class NewGame extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 int gridSize = Integer.parseInt((String)spinner.getValue());
                 String mode = (String)spinner_1.getValue();
-                out.println(String.valueOf(gridSize));
-                out.println(mode);
+                out.println(String.valueOf(gridSize) + " " + mode);
                 try {
                     Game game = new Game(gridSize, mode, serverAddress, port);
                     game.setVisible(true);
