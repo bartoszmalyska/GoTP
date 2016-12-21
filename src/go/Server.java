@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 /*
 Szablon dla QueryArr
 0 - NEW lub JOIN
@@ -24,14 +26,23 @@ public class Server {
         String query = input.readLine();
         try {
             while (true) {
-                GameSession game = new GameSession();
-                GameSession.Player playerBlack = game.new Player(listener.accept(), GameBoard.State.BLACK);
-                GameSession.Player playerWhite = game.new Player(listener.accept(), GameBoard.State.WHITE);
-                playerBlack.setOpponent(playerWhite);
-                playerWhite.setOpponent(playerBlack);
-                game.currentPlayer = playerBlack;
-                playerBlack.start();
-                playerWhite.start();
+                List<String> querylist = new ArrayList<String>();
+                while((query = input.readLine()) != null){querylist.add(query);}
+                String[] QueryArr = querylist.toArray(new String[0]);
+                if (QueryArr[0] == "NEW") {
+                    GameSession game = new GameSession();
+                    GameSession.Player playerBlack = game.new Player(listener.accept(), GameBoard.State.BLACK);
+                    GameSession.Player playerWhite = game.new Player(listener.accept(), GameBoard.State.WHITE);
+                    playerBlack.setOpponent(playerWhite);
+                    playerWhite.setOpponent(playerBlack);
+                    game.currentPlayer = playerBlack;
+                    playerBlack.start();
+                    playerWhite.start();
+                }
+                if (QueryArr[0] == "JOIN"){
+                    GameSession game;
+                    GameSession.Player playerBlack =
+                }
             }
         } finally {
             listener.close();
