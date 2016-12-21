@@ -20,6 +20,8 @@ public class Server {
     public void handlingserver(String[] args) throws IOException {
         ServerSocket listener = new ServerSocket(9090);
         System.out.print("wstał");
+        BufferedReader input = new BufferedReader(new InputStreamReader(listener.accept().getInputStream()));
+        String query = input.readLine();
         try {
             while (true) {
                 GameSession game = new GameSession();
@@ -37,7 +39,7 @@ public class Server {
     }
 
     class GameSession {
-
+        GameBoard.GameBoard (size);
         //konstruktor gry na serwerze//
 
         Player currentPlayer;
