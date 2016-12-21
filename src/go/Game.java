@@ -10,6 +10,8 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
 
+import static java.awt.Color.BLACK;
+
 
 public class Game extends JFrame {
 
@@ -31,14 +33,13 @@ public class Game extends JFrame {
         container.setLayout(new BorderLayout());
         getContentPane().add(container, BorderLayout.CENTER);
 
-        GameBoard board = new GameBoard(gridSize);
+        Board board = new Board(gridSize,Color.WHITE);
         container.add(board);
         JButton btnPass = new JButton("Pass Move");
         getContentPane().add(btnPass, BorderLayout.WEST);
         btnPass.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 //out.println("PASS");
-                board.pass();
 
             }
         });
