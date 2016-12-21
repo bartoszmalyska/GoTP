@@ -53,5 +53,14 @@ public class Server {
         Socket socket;
         BufferedReader in;
         PrintWriter out;
+        public Player(Socket socket, GameBoard.State color){
+            this.socket = socket;
+            this.color = color;
+            try {
+                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                out = new PrintWriter(socket.getOutputStream(), true);
+            } catch (IOException e){System.out.print("gracz spat");}
+
+        }
     }
 }
