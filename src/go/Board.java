@@ -2,56 +2,43 @@ package go;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.Socket;
 
 public class Board extends JPanel {
 
-    /**
-     * Number of rows/columns.
-     */
-    /**
-     * Number of tiles in row/column. (Size - 1)
-     */
-    private Color state=Color.BLACK;
-    private static int size;
-    public static int n_of_tiles;
+    public enum StoneColor {
+        BLACK,WHITE
+    }
+    public enum State {
+        ABLE, NOTABLE,TERRITORY
+    }
+    private static int size=19;
+    public static int n_of_tiles=size-1;
     public static final int TILE_SIZE = 40;
     public static final int BORDER_SIZE = TILE_SIZE;
-    private Point[][] stones;
-    private Point[][] marks;
-    private Point lastMove;
-    private Socket socket;
-    private BufferedReader in;
-    private PrintWriter out;
-    public Board(int size, String serverAddress, int port) throws IOException
+    private StoneColor [][] stones = new StoneColor[size][size];
+    private StoneColor[][] marks = new StoneColor[size][size];
+    private boolean territoryMode=false;
+    BufferedReader in;
+    PrintWriter out;
+    Thread receiver;
+    State state = State.ABLE;
+    StoneColor my;
+    public Board(BufferedReader in, PrintWriter out) throws IOException
     {
-        socket = new Socket(serverAddress, port);
-        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        out = new PrintWriter(socket.getOutputStream(), true);
         this.setFocusable(true);
         this.setBackground(Color.ORANGE);
-        this.size=size;
-        n_of_tiles=size-1;
-        stones=new Point[size][size];
+        this.in=in;
+        this.out=out;
 
         this.addMouseListener(new MouseAdapter() {
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            String response= null;
-            try {
-                response = in.readLine();
-            } catch (IOException e1) {
-                System.out.println("Nie czyta");
-            }
             // Converts to float for float division and then rounds to
             // provide nearest intersection.
             int row = Math.round((float) (e.getY() - BORDER_SIZE)
@@ -64,32 +51,25 @@ public class Board extends JPanel {
             if (row >= size || col >= size || row < 0 || col < 0) {
                 return;
             }
-            out.println("AddStone" + row + " " + col); // lub AddMark, ale nie wiem jak rozgraniczyć
-
-            if (response.startsWith("VALID_MOVE")){
-                stones[row][col]=new Point(row,col);
-                lastMove=new Point(col,row);
+            if(territoryMode)
+            {
+                //do ogarnięcia
                 repaint();
-                out.println("SWITCH");
-                if(response.startsWith("BLACK"))
-                    state=Color.BLACK;
-                else if(response.startsWith("WHITE"))
-                    state=Color.WHITE;
+                return;
             }
+            if(stones[row][col] == StoneColor.BLACK || stones[row][col] == StoneColor.WHITE)
+                return;
 
-            if (response.startsWith("VALID_MARK")){
-                marks[row][col]=new Point(row,col);
-                lastMove=new Point(col,row);
-                repaint();
-                out.println("SWITCH");
-                if(response.startsWith("BLACK"))
-                    state=Color.BLACK;
-                else if(response.startsWith("WHITE"))
-                    state=Color.WHITE;
+            out.println("MOVE " + row + " " + col);
+            out.flush();
+            repaint();
 
-            }
+            if(state== State.ABLE)
+                state = State.NOTABLE;
         }
     });
+        receiver = new Thread(new MessageReceiver());
+        receiver.start();
 
 }
 
@@ -113,37 +93,84 @@ public class Board extends JPanel {
             g2.drawLine(i * TILE_SIZE + BORDER_SIZE, BORDER_SIZE, i * TILE_SIZE
                     + BORDER_SIZE, TILE_SIZE * n_of_tiles + BORDER_SIZE);
         }
-        g2.setColor(state);
         // Iterate over intersections
         for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
                 if (stones[row][col] != null) {
+                    if (stones[row][col] == StoneColor.BLACK)
+                        g2.setColor(Color.BLACK);
+                    else
+                        g2.setColor(Color.WHITE);
                     g2.fillOval(col * TILE_SIZE + BORDER_SIZE - TILE_SIZE / 2,
                             row * TILE_SIZE + BORDER_SIZE - TILE_SIZE / 2,
                             TILE_SIZE, TILE_SIZE);
                 } else if (marks[row][col] != null) {
+                    if (marks[row][col] == StoneColor.BLACK)
+                        g2.setColor(Color.BLACK);
+                    else
+                        g2.setColor(Color.WHITE);
                     g2.fillRect(col * TILE_SIZE + BORDER_SIZE - TILE_SIZE, row * TILE_SIZE + BORDER_SIZE - TILE_SIZE, TILE_SIZE, TILE_SIZE);
                 }
             }
         }
-        // Highlight last move
-        if (lastMove!=null) {
-            g2.setColor(Color.RED);
-            g2.drawOval(lastMove.x * TILE_SIZE + BORDER_SIZE - TILE_SIZE / 2,
-                    lastMove.y * TILE_SIZE + BORDER_SIZE - TILE_SIZE / 2,
-                    TILE_SIZE, TILE_SIZE);
-        }
-        else if(lastMove!=null /* i territory mode */)
-            g2.drawRect(lastMove.x * TILE_SIZE + BORDER_SIZE - TILE_SIZE / 2,
-                        lastMove.y * TILE_SIZE + BORDER_SIZE - TILE_SIZE / 2,
-                        TILE_SIZE, TILE_SIZE);
-        }
-        //}
-    //}
+    }
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(n_of_tiles * TILE_SIZE + BORDER_SIZE * 2,
                 n_of_tiles * TILE_SIZE + BORDER_SIZE * 2);
+    }
+    public class MessageReceiver implements Runnable {
+        public void run() {
+            String response;
+            try {
+                while ((response = in.readLine()) != null) {
+
+
+                    String[] parts = response.split(("\\s+"));
+
+                    if (response.equals("BLACK")) {
+                        my = StoneColor.BLACK;
+                    }
+                    else if (response.equals("WHITE")) {
+                        my = StoneColor.WHITE;
+                    }
+                    else if (parts[0].equals("ADDSTONE")) {
+                        if (parts[1].equals("WHITE")) {
+                            stones[Integer.parseInt(parts[2])][Integer.parseInt(parts[3])]=StoneColor.WHITE;
+                            repaint();
+                        }
+                        else if (parts[1].equals("BLACK")) {
+                            stones[Integer.parseInt(parts[2])][Integer.parseInt(parts[3])]=StoneColor.BLACK;
+                            repaint();
+                        }
+                    }
+                    else if (response.equals("MOVE")) {
+                        state = State.ABLE;
+                    }
+                }
+            }
+            catch (NumberFormatException ex){
+                close();
+            }
+            catch (Exception ex) {
+                JOptionPane.showConfirmDialog((Component) null, "Opponent left, you won",
+                        "alert", JOptionPane.OK_OPTION);
+                close();
+            }
+        }
+    }
+
+    /**
+     * This method closes all of the streams.
+     */
+    private void close(){
+        try {
+            out.close();
+            in.close();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        System.exit(0);
     }
 
 

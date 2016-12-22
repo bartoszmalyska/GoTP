@@ -13,7 +13,7 @@ import static go.Grid.*;
  * Provides I/O.
  *
  */
-public class GameBoard extends JPanel {
+public class GameBoard {
 
     //TODO do ogarnięcia switch i pass
     //private static final long serialVersionUID = -494530433694385328L;//
@@ -39,22 +39,18 @@ public class GameBoard extends JPanel {
     }
 
     private State current_player;
-    private Grid grid;
+    public Grid grid;
     private boolean isSuicide=false;
     private int PassCounter=0;
     boolean territorymode = false;
 
     public GameBoard(int size) {
-        this.size=size;
-        n_of_tiles=size-1;
-        this.setFocusable(true);
-        this.setBackground(Color.ORANGE);
+        this.size = size;
+        n_of_tiles = size - 1;
         grid = new Grid(size);
+    }
 
-        // Black always starts
-        current_player = State.BLACK;
-
-    public boolean isValid(int row, int col) {
+    public boolean isValid(int row, int col, State state) {
         if (row >= size || col >= size || row < 0 || col < 0) {
             return false;
         }
@@ -64,7 +60,7 @@ public class GameBoard extends JPanel {
         }
         if (territorymode == false) {
 
-            grid.addStone(row, col, current_player);
+            grid.addStone(row, col, state);
 
             // Switch current player if move was correct
             if (grid.counter != 4 || grid.createdKo) {
@@ -79,14 +75,14 @@ public class GameBoard extends JPanel {
                 return false;
             }
             else
-                grid.addMark(row, col, current_player);
-            //lastMove = new Point(col, row);
+                grid.addMark(row, col, state);
             PassCounter = 2;
             return true;
 
         }
+        return false;
     }
-    public void switchPlayer()
+    /*public void switchPlayer()
     {
         isSuicide=false;
         if (current_player == State.BLACK) {
@@ -95,7 +91,7 @@ public class GameBoard extends JPanel {
             current_player = State.BLACK;
         }
     }
-    public void pass() {
+    public boolean pass() {
         PassCounter++;
         if (PassCounter == 2 && territorymode != true) {
             territorymode = true;
@@ -109,6 +105,7 @@ public class GameBoard extends JPanel {
         }
         else
             switchPlayer();
-    }
+            return true;
+    }*/
 
 }
