@@ -14,8 +14,8 @@ public class Grid {
     /**
      * [row][column]
      */
-    private Stone[][] stones;
-    private TerritoryMark[][] Marks;
+    public Stone[][] stones;
+    public TerritoryMark[][] Marks;
     public int counter;
     public boolean isKo = false;
     public boolean createdKo = false;
