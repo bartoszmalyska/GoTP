@@ -8,17 +8,17 @@ import State.*;
 
 public class GameServer extends Thread {
     boolean isGameOver = false;
-    public boolean playWithBot = false;
     public BufferedReader blackIs = null;
     public PrintWriter blackOs = null;
     public BufferedReader whiteIs = null;
     public PrintWriter whiteOs = null;
+    public int passcounter= 0;
 
     GameState state = States.BLACK_MOVE.getStateBehavior();
     int size=19;
 
-    private String nameBlack;
-    private String nameWhite;
+    private String name1;
+    private String name2;
 
     public GameBoard board;
 
@@ -28,6 +28,8 @@ public class GameServer extends Thread {
         blackOs = player1Handler.out;
         whiteIs = player2Handler.in;
         whiteOs = player2Handler.out;
+        this.name1=name1;
+        this.name2=name2;
 
         blackOs.println("BLACK");
         blackOs.flush();
@@ -37,7 +39,7 @@ public class GameServer extends Thread {
     }
 
     public boolean pass(){
-        // DO OGARNIĘCIA
+        passcounter++;
         return false;
     }
     public void close() {
@@ -51,14 +53,14 @@ public class GameServer extends Thread {
         } catch (IOException e1) {
             e1.printStackTrace();
         }
-        System.exit(0);
+        //System.exit(0);
     }
 
 
     public String listenWhite() throws IOException{
-        String msg=null;
-        msg = whiteIs.readLine();
+        String msg = whiteIs.readLine();
         if(msg.equals("SURRENDER")){
+            sendToBlack("YOU_WON_SURR");
             isGameOver=true;
             close();
             state = States.WIN.getStateBehavior();
@@ -69,6 +71,7 @@ public class GameServer extends Thread {
     public String listenBlack() throws IOException{
         String msg = blackIs.readLine();
         if(msg.equals("SURRENDER")){
+            sendToWhite("YOU_WON_SURR");
             isGameOver=true;
             close();
             state = States.WIN.getStateBehavior();
@@ -77,8 +80,8 @@ public class GameServer extends Thread {
     }
 
     public void sendToWhite(String content){
-            whiteOs.println(content);
-            whiteOs.flush();
+        whiteOs.println(content);
+        whiteOs.flush();
     }
     public void sendToBlack(String content){
         blackOs.println(content);
@@ -86,6 +89,11 @@ public class GameServer extends Thread {
     }
 
     public void run() {
+
+        if (passcounter == 2){
+            state = States.TERRITORY_MODE.getStateBehavior();
+        }
+
 
         try {
             while(state.getClass() != WinDialog.class){

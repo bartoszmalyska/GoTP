@@ -49,16 +49,10 @@ class GameRoom extends Thread {
 
         synchronized (playerThreads) {
             for(SocketHandler p : playerThreads){
-                System.out.println(name2 + " " + p.name);
                 if(p.name.equals(name2))
                     player2Handler=p;
             }
         }
-
-        player1Handler.out.println("CHALLENGE");
-        player1Handler.out.flush();
-        player2Handler.out.println("CHALLENGE");
-        player2Handler.out.flush();
 
         synchronized (players) {
             if(players.containsKey(name1)){
@@ -95,10 +89,24 @@ class GameRoom extends Thread {
             out.println("WELCOME");
             synchronized (players) {
                 for(PrintWriter p : players.values()){
-                    p.println("NEW_PLAYER" + name);
+                    p.println("NEW_PLAYER " + name);
                 }
                 for(String s : players.keySet()){
                     out.println("NEW_PLAYER " + s);
+                }
+            }
+        }
+        public void leavingRoom()
+        {
+            synchronized(players)
+            {
+                if(players.containsKey(name))
+                {
+                    for(PrintWriter p : players.values())
+                    {
+                        p.println("PLAYER_LEFT " + name);
+                    }
+                    players.remove(name);
                 }
             }
         }
@@ -163,7 +171,6 @@ class GameRoom extends Thread {
                                 PrintWriter temp = players.getOrDefault(opponentName, null);
                                 if (temp != null) {
                                     temp.flush();
-                                    temp.println(name + " declined");
                                 }
                             }
                         }
@@ -177,6 +184,7 @@ class GameRoom extends Thread {
 
                 try {
                     if(startedGame==false){
+                        leavingRoom();
                         socket.close();
                         in.close();
                         out.close();

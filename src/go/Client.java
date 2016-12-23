@@ -29,7 +29,7 @@ public class Client {
     private void initialize() {
 
         try {
-            socket = new Socket("localhost", 9090);
+            socket = new Socket("127.0.0.1", 9090);
 
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             writer = new PrintWriter(socket.getOutputStream());
@@ -66,6 +66,7 @@ public class Client {
 
         Board board = new Board(reader, writer);
         container.add(board);
+        board.setFocusable(true);
 
 
         JButton buttonPass = new JButton("PASS");

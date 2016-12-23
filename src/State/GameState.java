@@ -8,8 +8,8 @@ import java.io.IOException;
 import go.*;
 
 /**
- * State Pattern
+ * PlayerState Pattern
  */
 public interface GameState {
-    GameState perform (final GameServer server) throws IOException;
+    GameState perform (GameServer server) throws IOException;
 }
