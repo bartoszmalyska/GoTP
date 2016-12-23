@@ -68,9 +68,12 @@ public class OpponentManager implements ListSelectionListener {
         });
         play.setBounds(286, 61, 138, 46);
         frame.getContentPane().add(play);
-
         receiver = new Thread(new MessageReceiver());
         receiver.start();
+
+        if(hasGameStarted){
+            receiver.interrupt();
+        }
 
     }
     @Override
