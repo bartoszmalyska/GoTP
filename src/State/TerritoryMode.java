@@ -39,6 +39,25 @@ public class TerritoryMode implements GameState {
                 checkMark(context.board.grid.Marks,context,x,y);
             }
         }
+        if(whiteresponse.contains("PLACE")){
+
+            int x=0, y=0;
+            String wsxy[] = whiteresponse.split("\\s+");
+            System.out.println(wsxy[0]);
+
+            try{
+                x = Integer.parseInt(wsxy[1]);
+                y = Integer.parseInt(wsxy[2]);
+            }
+            catch (NumberFormatException ex){
+                ex.printStackTrace();
+                return States.TERRITORY_MODE.getStateBehavior();
+            }
+            if (context.board.isValid(x,y, GameBoard.State.WHITE)){
+                context.sendToWhite(" ADDMARK WHITE " + x + "" + y);
+                checkMark(context.board.grid.Marks,context,x,y);
+            }
+        }
 
         return States.TERRITORY_MODE.getStateBehavior();
     }
