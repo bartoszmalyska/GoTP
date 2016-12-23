@@ -26,21 +26,20 @@ public class OpponentManager implements ListSelectionListener {
     Thread receiver;
     Client c;
 
-    boolean gameStarted=false;
+    boolean hasGameStarted =false;
 
-    OpponentManager(Client cl, BufferedReader r, PrintWriter w) {
+    public OpponentManager(Client cl, BufferedReader r, PrintWriter w) {
         reader =  r;
         writer = w;
         c=cl;
 
         setNick = new SetNick(this, reader, writer);
         setNick.setVisible(true);
-        setNick.requestFocus();
         frame = new JFrame();
         frame.setBounds(100, 100, 482, 300);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(null);
-
+        frame.setResizable(false);
 
         listofplayers = new JList<String>(model);
 
@@ -56,7 +55,7 @@ public class OpponentManager implements ListSelectionListener {
         frame.getContentPane().add(listofplayersscr);
         listofplayersscr.setBounds(41, 48, 151, 170);
 
-        JButton play = new JButton("Challenge selected player");
+        JButton play = new JButton("Challenge");
         play.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
 
@@ -83,17 +82,12 @@ public class OpponentManager implements ListSelectionListener {
 
         }
     }
-
-    /**
-     * The aim of this class is to read messages from the input stream, to which data from server goes
-     * and depending on message content performs different things.
-     */
     public class MessageReceiver implements Runnable {
         public void run() {
             String message;
             try {
-                while ((message = reader.readLine()) != null && gameStarted==false) {
-                    if(message.contains("NEW_PLAYER") && !myNick.equals(message.substring(11))){
+                while ((message = reader.readLine()) != null && hasGameStarted ==false) {
+                    if(message.contains("NEW_PLAYER") && !myNick.equals(message.substring(10))){
                         model.addElement(message.substring(11));
                     }
                     else if(message.contains("PLAYER_LEFT")){
@@ -115,13 +109,13 @@ public class OpponentManager implements ListSelectionListener {
                         writer.flush();
                         frame.setVisible(false);
                         c.startGame();
-                        gameStarted=true;
+                        hasGameStarted =true;
 
                     }
                     else if(message.equals("START_GAME")){
                         frame.setVisible(false);
                         c.startGame();
-                        gameStarted=true;
+                        hasGameStarted =true;
                     }
                 }
             } catch (Exception ex) {

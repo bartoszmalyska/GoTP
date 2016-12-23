@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
 
 import java.io.*;
 import java.net.*;
@@ -13,15 +12,13 @@ public class SetNick extends JDialog {
 
     private JPanel contentPanel = new JPanel();
     public JTextField textField;
-    public String mynick;
-    public boolean free;
+    public String myNick;
+    public boolean available;
 
     BufferedReader reader;
     PrintWriter writer;
     Socket socket;
     Thread receiver;
-
-    JLabel statusbar;
 
     public SetNick(OpponentManager window, BufferedReader reader, PrintWriter writer) {
 
@@ -34,15 +31,9 @@ public class SetNick extends JDialog {
         getContentPane().add(contentPanel, BorderLayout.CENTER);
         contentPanel.setLayout(null);
 
-        statusbar = new JLabel("");
-        statusbar.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
-        statusbar.setBounds(20, 236, 466, 25);
-        getContentPane().add(statusbar,BorderLayout.SOUTH);
-        contentPanel.add(statusbar);
-
-        JLabel lblGiveNick = new JLabel("Podaj swoj nick:");
-        lblGiveNick.setBounds(85, 11, 143, 30);
-        contentPanel.add(lblGiveNick);
+        JLabel lblNick = new JLabel("Nick:");
+        lblNick.setBounds(85, 11, 143, 30);
+        contentPanel.add(lblNick);
 
         textField = new JTextField();
         textField.setBounds(62, 52, 166, 30);
@@ -50,7 +41,7 @@ public class SetNick extends JDialog {
         textField.setColumns(10);
         textField.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                mynick=textField.getText();
+                myNick =textField.getText();
             }
         });
 
@@ -60,15 +51,12 @@ public class SetNick extends JDialog {
 
         JButton okButton = new JButton("OK");
         buttonPane.add(okButton);
-        //okButton.setActionCommand("OK");
-        //getRootPane().setDefaultButton(okButton);
-
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String textfieldnick = textField.getText();
-                String mynick = checkingNick(textfieldnick);
+                String tfNick = textField.getText();
+                String mynick = nickCheck(tfNick);
 
-                if (!mynick.equals("failed") && !mynick.equals("Wpisz swoj pseudonim!")) {
+                if (!mynick.equals("failed") && !mynick.equals("Nick!")) {
 
                     window.myNick = mynick;
                     writer.println(mynick);
@@ -79,7 +67,7 @@ public class SetNick extends JDialog {
         });
 
 
-        JButton cancelButton = new JButton("Anuluj");
+        JButton cancelButton = new JButton("Cancel");
         buttonPane.add(cancelButton);
 
         cancelButton.addActionListener(new ActionListener() {	//if user clicks cancel, window closes
@@ -92,31 +80,26 @@ public class SetNick extends JDialog {
         receiver.start();										//(where are data from server) and prints them
     }
 
-    public String checkingNick(String mynick) {
+    public String nickCheck(String mynick) {
 
-        //mynick = textField.getText();
+        //myNick = textField.getText();
 
         if (!mynick.isEmpty()) {
 
-            free = true;
+            available = true;
             try {
-                if (free) {		//is approved only if given nick doesn't exists in database
-
-                    System.out.println("Wysylam na serwer nick: " + mynick);
+                if (available) {		//is approved only if given nick doesn't exists in database
+                    
                     setVisible(false);
                     dispose();
                     return mynick;
-                }
-                else {
-                    System.out.println("Wpisany przez Ciebie nick jest juz zajety, podaj inny.");
                 }
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
         }
         else {
-            System.out.println("Wpisz swoj pseudonim!");
-            return "Wpisz swoj pseudonim!";
+            return "Nick!";
         }
         return "failed";
     }
@@ -130,17 +113,14 @@ public class SetNick extends JDialog {
         public void run() {
             String message;
             try {
-                while(!free) {		//loop which reads messages sent from server line by line
+                while(!available) {
                     message = reader.readLine();
-                    System.out.println("Odczytano : " + message);
                     switch (message) {
                         case "ACCEPTED":
-                            System.out.println("Wykonuje dzialania dla ACCEPTED");
-                            free = true;
+                            available = true;
                             break;
                         case "SUBMITNAME":
-                            System.out.println("Wykonuje dzialania dla SUBMITNAME");
-                            free = false;
+                            available = false;
                             break;
                     }
                 }

@@ -13,7 +13,7 @@ public class Board extends JPanel {
     public enum StoneColor {
         BLACK,WHITE
     }
-    public enum State {
+    public enum PlayerState {
         ABLE, NOTABLE,TERRITORY
     }
     private static int size=19;
@@ -26,7 +26,7 @@ public class Board extends JPanel {
     BufferedReader in;
     PrintWriter out;
     Thread receiver;
-    State state = State.ABLE;
+    PlayerState playerState = PlayerState.NOTABLE;
     StoneColor my;
     public Board(BufferedReader in, PrintWriter out) throws IOException
     {
@@ -39,33 +39,33 @@ public class Board extends JPanel {
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            // Converts to float for float division and then rounds to
-            // provide nearest intersection.
-            int row = Math.round((float) (e.getY() - BORDER_SIZE)
-                    / TILE_SIZE);
-            int col = Math.round((float) (e.getX() - BORDER_SIZE)
-                    / TILE_SIZE);
-
-
-
-            if (row >= size || col >= size || row < 0 || col < 0) {
-                return;
-            }
-            if(territoryMode)
+            System.out.println(playerState);
+            if(playerState != PlayerState.NOTABLE)
             {
-                //do ogarnięcia
+                int row = Math.round((float) (e.getY() - BORDER_SIZE)
+                        / TILE_SIZE);
+                int col = Math.round((float) (e.getX() - BORDER_SIZE)
+                        / TILE_SIZE);
+
+
+                if (row >= size || col >= size || row < 0 || col < 0) {
+                    return;
+                }
+                if(territoryMode)
+                {
+                    //do ogarnięcia
+                    repaint();
+                    return;
+                }
+                if(stones[row][col] == StoneColor.BLACK || stones[row][col] == StoneColor.WHITE)
+                    return;
+                out.println("MOVE " + row + " " + col);
+                out.flush();
                 repaint();
-                return;
+
+                if(playerState == PlayerState.ABLE)
+                    playerState = PlayerState.NOTABLE;
             }
-            if(stones[row][col] == StoneColor.BLACK || stones[row][col] == StoneColor.WHITE)
-                return;
-
-            out.println("MOVE " + row + " " + col);
-            out.flush();
-            repaint();
-
-            if(state== State.ABLE)
-                state = State.NOTABLE;
         }
     });
         receiver = new Thread(new MessageReceiver());
@@ -155,8 +155,14 @@ public class Board extends JPanel {
                         }
                     }
                     else if (response.equals("MOVE")) {
-                        state = State.ABLE;
+                        playerState = PlayerState.ABLE;
                     }
+                    else if(response.equals("YOU_WON_SURR")){
+                        JOptionPane.showConfirmDialog((Component) null, "Opponent left, you won",
+                                "alert", JOptionPane.OK_OPTION);
+                        close();
+                    }
+
 
                 }
             }
