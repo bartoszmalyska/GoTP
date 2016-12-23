@@ -37,7 +37,7 @@ public class OpponentManager implements ListSelectionListener {
         setNick.setVisible(true);
         frame = new JFrame();
         frame.setBounds(100, 100, 482, 300);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(null);
         frame.setResizable(false);
 

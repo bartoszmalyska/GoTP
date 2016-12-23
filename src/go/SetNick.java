@@ -81,7 +81,7 @@ public class SetNick extends JDialog {
 
         if(myNick != "Nick!" && myNick != "failed"){
             if (available = true){
-                receiver.interrupt();
+                receiver.stop();
             }
         }
     }
