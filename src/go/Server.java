@@ -140,7 +140,7 @@ class GameRoom extends Thread {
                                 temp.flush();
                                 temp.println("CHALLENGE " + name);
                             }
-                        } else if (input.contains("START GAME")) {
+                        } else if (input.contains("start game")) {
                             startedGame = true;
                             opponentName = input.substring(11);
                             challenge(this, name, opponentName);
