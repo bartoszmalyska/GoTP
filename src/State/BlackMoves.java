@@ -9,7 +9,6 @@ public class BlackMoves implements GameState {
 
     @Override
     public GameState perform(GameServer server) throws IOException{
-
         server.sendToBlack("MOVE");
 
         String msg = server.listenBlack();
@@ -28,8 +27,7 @@ public class BlackMoves implements GameState {
             String sxy[] = msg.split("\\s+");
             System.out.println(sxy[0]);
 
-            try
-            {
+            try {
                 x = Integer.parseInt(sxy[1]);
                 y = Integer.parseInt(sxy[2]);
             }

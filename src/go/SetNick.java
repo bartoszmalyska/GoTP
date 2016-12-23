@@ -77,7 +77,13 @@ public class SetNick extends JDialog {
         });
 
         receiver = new Thread(new MessageReceiver());		//running new thread; it reads messages from input stream
-        receiver.start();										//(where are data from server) and prints them
+        receiver.start();//(where are data from server) and prints them
+
+        if(myNick != "Nick!" && myNick != "failed"){
+            if (available = true){
+                receiver.interrupt();
+            }
+        }
     }
 
     public String nickCheck(String mynick) {
