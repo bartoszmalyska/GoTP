@@ -143,7 +143,7 @@ public class Board extends JPanel {
                         }
                     }
                     else if (response.equals("MOVE")) {
-                        state = State.ABLE;
+                        state = State.ABLE;  //@// TODO: 2016-12-23 tutaj chyba zaczyna się ten bug ze spaowaniem ruchu ponieważ każda komenda MOVE daje Able na planszy? 
                     }
                 }
             }
