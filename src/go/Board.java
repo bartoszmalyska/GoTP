@@ -47,23 +47,25 @@ public class Board extends JPanel {
                     / TILE_SIZE);
 
 
-                if (row >= size || col >= size || row < 0 || col < 0) {
-                    return;
-                }
-                if (territoryMode) {
-                    //do ogarnięcia
-                    repaint();
-                    return;
-                }
-                if (stones[row][col] == StoneColor.BLACK || stones[row][col] == StoneColor.WHITE)
-                    return;
 
-                out.println("MOVE " + row + " " + col);
-                out.flush();
+            if (row >= size || col >= size || row < 0 || col < 0) {
+                return;
+            }
+            if(territoryMode)
+            {
+                //do ogarnięcia
                 repaint();
+                return;
+            }
+            if(stones[row][col] == StoneColor.BLACK || stones[row][col] == StoneColor.WHITE)
+                return;
 
-                if (state == State.ABLE)
-                    state = State.NOTABLE;
+            out.println("MOVE " + row + " " + col);
+            out.flush();
+            repaint();
+
+            if(state== State.ABLE)
+                state = State.NOTABLE;
         }
     });
         receiver = new Thread(new MessageReceiver());
@@ -142,9 +144,20 @@ public class Board extends JPanel {
                             repaint();
                         }
                     }
-                    else if (response.equals("MOVE")) {
-                        state = State.ABLE;  //@// TODO: 2016-12-23 tutaj chyba zaczyna się ten bug ze spaowaniem ruchu ponieważ każda komenda MOVE daje Able na planszy? 
+                    else if (parts[0].equals("REMOVESTONE")) {
+                        if (parts[1].equals("WHITE")) {
+                            stones[Integer.parseInt(parts[2])][Integer.parseInt(parts[3])]=null;
+                            repaint();
+                        }
+                        else if (parts[1].equals("BLACK")) {
+                            stones[Integer.parseInt(parts[2])][Integer.parseInt(parts[3])]=null;
+                            repaint();
+                        }
                     }
+                    else if (response.equals("MOVE")) {
+                        state = State.ABLE;
+                    }
+
                 }
             }
             catch (NumberFormatException ex){
