@@ -154,7 +154,7 @@ class GameRoom extends Thread {
                                 PrintWriter temp = players.getOrDefault(opponentName, null);
                                 if (temp != null) {
                                     temp.flush();
-                                    temp.println("accepted " + name);
+                                    temp.println("ACCEPTED " + name);
                                 }
                             }
                         } else if (input.contains("DECLINE")) {
