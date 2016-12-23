@@ -13,6 +13,7 @@ public class GameServer extends Thread {
     public PrintWriter blackOs = null;
     public BufferedReader whiteIs = null;
     public PrintWriter whiteOs = null;
+    public int passcounter= 0;
 
     GameState state = States.BLACK_MOVE.getStateBehavior();
     int size=19;
@@ -37,6 +38,7 @@ public class GameServer extends Thread {
     }
 
     public boolean pass(){
+        passcounter++;
         // DO OGARNIĘCIA
         return false;
     }
@@ -86,6 +88,11 @@ public class GameServer extends Thread {
     }
 
     public void run() {
+
+        if (passcounter == 2){
+                state = States.TERRITORY_MODE.getStateBehavior();
+        }
+
 
         try {
             while(state.getClass() != WinDialog.class){
