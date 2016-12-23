@@ -47,25 +47,23 @@ public class Board extends JPanel {
                     / TILE_SIZE);
 
 
+                if (row >= size || col >= size || row < 0 || col < 0) {
+                    return;
+                }
+                if (territoryMode) {
+                    //do ogarnięcia
+                    repaint();
+                    return;
+                }
+                if (stones[row][col] == StoneColor.BLACK || stones[row][col] == StoneColor.WHITE)
+                    return;
 
-            if (row >= size || col >= size || row < 0 || col < 0) {
-                return;
-            }
-            if(territoryMode)
-            {
-                //do ogarnięcia
+                out.println("MOVE " + row + " " + col);
+                out.flush();
                 repaint();
-                return;
-            }
-            if(stones[row][col] == StoneColor.BLACK || stones[row][col] == StoneColor.WHITE)
-                return;
 
-            out.println("MOVE " + row + " " + col);
-            out.flush();
-            repaint();
-
-            if(state== State.ABLE)
-                state = State.NOTABLE;
+                if (state == State.ABLE)
+                    state = State.NOTABLE;
         }
     });
         receiver = new Thread(new MessageReceiver());
