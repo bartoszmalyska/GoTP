@@ -7,9 +7,9 @@ import go.*;
 public class WhiteMoves implements GameState {
 
     @Override
-    public GameState perform(go.GameServer server) throws IOException{
+    public GameState perform(GameServer server) throws IOException{
 
-        server.sendToBlack("MOVE");
+        server.sendToWhite("MOVE");
 
         String msg = server.listenWhite();
 
@@ -31,8 +31,8 @@ public class WhiteMoves implements GameState {
                 return States.WHITE_MOVE.getStateBehavior();
             }
             if(server.board.isValid(x,y, GameBoard.State.WHITE)){
-                server.sendToBlack("ADDSTONE WHITE " + x + " " + y);
                 server.sendToWhite("ADDSTONE WHITE " + x + " " + y);
+                server.sendToBlack("ADDSTONE WHITE " + x + " " + y);
             }
             else{
                 return States.WHITE_MOVE.getStateBehavior();
