@@ -9,7 +9,6 @@ public class WhiteMoves implements GameState {
 
     @Override
     public GameState perform(GameServer server) throws IOException{
-
         server.sendToWhite("MOVE");
 
         String msg = server.listenWhite();
@@ -23,7 +22,7 @@ public class WhiteMoves implements GameState {
             return States.WHITE_PASS.getStateBehavior();
         }
         else if(msg.contains("MOVE")){
-
+            server.passcounter=0;
             int x=0, y=0;
             String sxy[] = msg.split("\\s+");
             System.out.println(sxy[0]);
@@ -36,7 +35,7 @@ public class WhiteMoves implements GameState {
                 System.out.println("client communication problem");
                 return States.WHITE_MOVE.getStateBehavior();
             }
-            if(server.board.isValid(x,y, GameBoard.State.WHITE)){
+            if(server.board.isValid(x,y, GameBoard.State.WHITE, false)){
                 server.sendToWhite("ADDSTONE WHITE " + x + " " + y);
                 server.sendToBlack("ADDSTONE WHITE " + x + " " + y);
                 checkMove(server.board.grid.stones,server,x,y);
@@ -56,7 +55,6 @@ public class WhiteMoves implements GameState {
             {
                 if(checkBoard[row][col]!=board[row][col] && !(row==x && col==y))
                 {
-                    System.out.println(row + " " + col);
                     server.sendToBlack("REMOVESTONE BLACK " + row + " " + col);
                     server.sendToWhite("REMOVESTONE BLACK " + row + " " + col);
                 }

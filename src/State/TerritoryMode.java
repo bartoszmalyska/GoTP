@@ -34,9 +34,9 @@ public class TerritoryMode implements GameState {
                 ex.printStackTrace();
                 return States.TERRITORY_MODE.getStateBehavior();
             }
-            if (context.board.isValid(x,y, GameBoard.State.BLACK)){
+            if (context.board.isValid(x,y, GameBoard.State.BLACK, true)){
                 context.sendToBlack(" ADDMARK BLACK " + x + "" + y);
-                checkMark(context.board.grid.Marks,context,x,y);
+                //checkMark(context.board.grid.Marks,context,x,y);
             }
         }
         if(whiteresponse.contains("PLACE")){
@@ -53,9 +53,9 @@ public class TerritoryMode implements GameState {
                 ex.printStackTrace();
                 return States.TERRITORY_MODE.getStateBehavior();
             }
-            if (context.board.isValid(x,y, GameBoard.State.WHITE)){
+            if (context.board.isValid(x,y, GameBoard.State.WHITE, true)){
                 context.sendToWhite(" ADDMARK WHITE " + x + "" + y);
-                checkMark(context.board.grid.Marks,context,x,y);
+                //checkMark(context.board.grid.Marks,context,x,y);
             }
         }
 

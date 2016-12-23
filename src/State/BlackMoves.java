@@ -23,7 +23,7 @@ public class BlackMoves implements GameState {
             return States.BLACK_PASS.getStateBehavior();
         }
         else if(msg.contains("MOVE")){
-
+            server.passcounter=0;
             int x=0, y=0;
             String sxy[] = msg.split("\\s+");
             System.out.println(sxy[0]);
@@ -37,7 +37,7 @@ public class BlackMoves implements GameState {
                 ex.printStackTrace();
                 return States.BLACK_MOVE.getStateBehavior();
             }
-            if(server.board.isValid(x,y, GameBoard.State.BLACK)){
+            if(server.board.isValid(x,y, GameBoard.State.BLACK, false)){
                 server.sendToBlack("ADDSTONE BLACK " + x + " " + y);
                 server.sendToWhite("ADDSTONE BLACK " + x + " " + y);
                 checkMove(server.board.grid.stones,server,x,y);
@@ -57,7 +57,6 @@ public class BlackMoves implements GameState {
             {
                 if(checkBoard[row][col]!=board[row][col] && !(row==x && col==y))
                 {
-                    System.out.println(row + " " + col);
                     server.sendToBlack("REMOVESTONE WHITE " + row + " " + col);
                     server.sendToWhite("REMOVESTONE WHITE " + row + " " + col);}
             }
