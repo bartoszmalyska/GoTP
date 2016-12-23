@@ -73,7 +73,6 @@ public class OpponentManager implements ListSelectionListener {
         receiver.start();
 
     }
-
     @Override
     public void valueChanged(ListSelectionEvent event) {
         if(!event.getValueIsAdjusting()) {
@@ -87,7 +86,7 @@ public class OpponentManager implements ListSelectionListener {
             String message;
             try {
                 while ((message = reader.readLine()) != null && hasGameStarted ==false) {
-                    if(message.contains("NEW_PLAYER") && !myNick.equals(message.substring(10))){
+                    if(message.contains("NEW_PLAYER") && !myNick.equals(message.substring(11))){
                         model.addElement(message.substring(11));
                     }
                     else if(message.contains("PLAYER_LEFT")){
