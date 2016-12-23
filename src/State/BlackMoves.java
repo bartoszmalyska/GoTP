@@ -5,6 +5,7 @@ import java.io.IOException;
 import go.*;
 
 public class BlackMoves implements GameState {
+    Stone[][] checkBoard = new Stone[19][19];
 
     @Override
     public GameState perform(GameServer server) throws IOException{
@@ -12,6 +13,11 @@ public class BlackMoves implements GameState {
         server.sendToBlack("MOVE");
 
         String msg = server.listenBlack();
+        for(int row=0;row<19;row++)
+        {
+            for(int col=0;col<19;col++)
+                checkBoard[row][col]=server.board.grid.stones[row][col];
+        }
 
         if(msg.contains("PASS")){
             return States.BLACK_PASS.getStateBehavior();
@@ -34,6 +40,7 @@ public class BlackMoves implements GameState {
             if(server.board.isValid(x,y, GameBoard.State.BLACK)){
                 server.sendToBlack("ADDSTONE BLACK " + x + " " + y);
                 server.sendToWhite("ADDSTONE BLACK " + x + " " + y);
+                checkMove(server.board.grid.stones,server,x,y);
             }
             else {
                 return States.BLACK_MOVE.getStateBehavior();
@@ -41,6 +48,23 @@ public class BlackMoves implements GameState {
             return States.WHITE_MOVE.getStateBehavior();
         }
         return States.BLACK_MOVE.getStateBehavior();
+    }
+    public void checkMove(Stone[][] board,GameServer server, int x,int y)
+    {
+        for(int row=0;row<19;row++)
+        {
+            for(int col=0;col<19;col++)
+            {
+                if(checkBoard[row][col]!=board[row][col] && !(row==x && col==y))
+                {
+                    System.out.println(row + " " + col);
+                    server.sendToBlack("REMOVESTONE WHITE " + row + " " + col);
+                    server.sendToWhite("REMOVESTONE WHITE " + row + " " + col);}
+            }
+
+        }
+
+
     }
 
 }
