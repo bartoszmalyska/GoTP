@@ -39,7 +39,6 @@ public class GameServer extends Thread {
 
     public boolean pass(){
         passcounter++;
-        // DO OGARNIĘCIA
         return false;
     }
     public void close() {
