@@ -72,7 +72,7 @@ public class OpponentManager implements ListSelectionListener {
         receiver.start();
 
         if(hasGameStarted){
-            receiver.interrupt();
+            receiver.stop();
         }
 
     }
