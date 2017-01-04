@@ -39,7 +39,7 @@ public class Board extends JPanel {
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            System.out.println(playerState);
+            System.out.println(my + " " + playerState);
             if(playerState != PlayerState.NOTABLE)
             {
                 int row = Math.round((float) (e.getY() - BORDER_SIZE)
@@ -59,6 +59,9 @@ public class Board extends JPanel {
                 }
                 if(stones[row][col] == StoneColor.BLACK || stones[row][col] == StoneColor.WHITE)
                     return;
+                System.out.println("MOVE " + row + " " + col);
+                out.println("MOVE " + row + " " + col);
+                out.flush();
                 out.println("MOVE " + row + " " + col);
                 out.flush();
                 repaint();
@@ -135,6 +138,7 @@ public class Board extends JPanel {
                         my = StoneColor.WHITE;
                     }
                     else if (parts[0].equals("ADDSTONE")) {
+                        System.out.println(parts[1]);
                         if (parts[1].equals("WHITE")) {
                             stones[Integer.parseInt(parts[2])][Integer.parseInt(parts[3])]=StoneColor.WHITE;
                             repaint();
@@ -155,6 +159,7 @@ public class Board extends JPanel {
                         }
                     }
                     else if (response.equals("MOVE")) {
+                        System.out.println("Ruszaj " + my);
                         playerState = PlayerState.ABLE;
                     }
                     else if(response.equals("YOU_WON_SURR")){
